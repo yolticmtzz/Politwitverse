@@ -24,11 +24,20 @@ def send_personality_traits(USER_ID, message):
       data = {
           "text": message
       }
+
       payload = json.dumps(data)
 
-      response = requests.request("POST", url, data=payload, headers=headers)
+      print(url)
+      print(payload)
+      print(headers)
 
-      print(response.status_code, response.text)
+      #response = requests.request("POST", url, data=payload, headers=headers)
+
+      
+
+      #print(response.status_code, response.text)
+
+
 
 
 
@@ -39,28 +48,48 @@ def send_personality_traits(USER_ID, message):
 
 
 
-def retrieve_personality_traits(SOCIAL_USER_NAME, SOCIAL_PROFILES, HUMANTIC_ID, message, PERSONA):
+def retrieve_personality_traits(USER_ID, PERSONA):
     API_KEY = 'chrexec_fe80f6f524bce628b039e123e4eea9e1' 
-    conn = http.client.HTTPSConnection("api.humantic.ai")
-
-    FETCH_ENDPOINT = "/v1/user-profile"  # FETCH endpoint
+    
+    BASE_URL = "https://api.humantic.ai/v1/user-profile"  # Base URL for the FETCH endpoint
     headers = {
     'Content-Type': 'application/json'
     }
 
-    url = f"{FETCH_ENDPOINT}?apikey={HUMANTIC_API_KEY}&id={HUMANTIC_ID}&persona={PERSONA}&username={SOCIAL_USER_NAME}&social_profiles{SOCIAL_PROFILES}"
-    payload = {}
-    print(url)
-
-    conn.request("GET", url, payload, headers)
-    response = conn.getresponse()
-    #status_code = response.status
-    data = response.read()
-    #print(status_code, data.decode("utf-8"))
-    #print(data.decode("utf-8"))
-
-    f = open("humantic" + HUMANTIC_ID + ".txt", "w")
-    f.write(data.decode("utf-8"))
-    f.close()
+    # API Key: required; get the API key from the environment variable or substitute it directly
 
 
+    # Analysis ID: required; should be same as the id used to create the analysis
+    #USER_ID = "https://www.linkedin.com/in/ramanaditya"  # or, any unique identifier
+
+    # Persona: optional; possible values: "sales", "hiring"
+    url = f"{BASE_URL}?apikey={API_KEY}&id={USER_ID}&persona={PERSONA}"
+
+    response = requests.request("GET", url, headers=headers)
+    print(response.status_code, response.text)
+
+    file = open("humantic.txt", "w")
+    file.write(response.text)
+    file.close()
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
