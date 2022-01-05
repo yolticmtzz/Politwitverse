@@ -22,5 +22,5 @@ Currently using:
 Tweepy, Azure SQL Server, Power BI
 www.politwit1984.com
 
-Thaanks to https://github.com/s/preprocessor for the great parsing tool that's being used in this project.
+Thanks to https://github.com/s/preprocessor for the great parsing tool that's being used in this project.
 
