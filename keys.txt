@@ -1,0 +1,15 @@
+
+twitter api key
+y8iMAF2ecmEZVQXKduP10C4s9
+
+twitter api secret
+vcyW2RpxAlXBm0Yu71eF8jtXscEejzCoIFDFVJp20WOMomlYvd
+
+bearer token
+AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAKAMZyNc9%2FF0wV%2Bzp9y2jcPwYG9U%3Dvvv4YqNOg5ZBuzznjuIwttR5UL6ESPN96ceQQaEeJ1Kng0PeDQ
+
+access token
+1469761271709028359-D2EzRWZ0WYmyNE9pbwvGplaNGua9LU
+
+access token secret
+XWkcVYNZDU0V4Qb1WouQSdq8nmZPYx39clDhlBU0iT8qm

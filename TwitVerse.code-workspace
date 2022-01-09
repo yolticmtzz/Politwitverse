@@ -2,9 +2,26 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "..\\vaderSentiment"
+		},
+		{
+			"path": "..\\..\\Users\\Joe Wilson\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\\LocalCache\\Roaming\\nltk_data"
+		},
+		{
+			"path": "..\\..\\Users\\Joe Wilson\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python39\\site-packages\\searchtweets"
+		},
+		{
+			"path": "..\\..\\Users\\Joe Wilson\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.9_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python39\\site-packages\\searchtweets_v2-1.1.1.dist-info"
+		},
+		{
+			"name": "TweetBeat",
+			"path": "..\\TweetBeat"
 		}
 	],
 	"settings": {
-		"terminal.integrated.environmentChangesIndicator": "on"
+		"terminal.integrated.environmentChangesIndicator": "on",
+		"debug.internalConsoleOptions": "neverOpen"
 	}
 }

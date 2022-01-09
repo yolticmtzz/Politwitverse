@@ -120,4 +120,36 @@ def get_user_personality_tweets(personality_tweets):
 
 
 #loop = asyncio.get_event_loop()
-#loop.run_until_complete(run())
+#loop.run_until_complete(ru
+
+def hydrate_search_recent_tweet_data(tweet_data):
+  result=[]
+  for tweet in response:
+    # Take all of the users, and put them into a dictionary of dictionaries with the info we want to keep
+    for user in response.includes['users']:
+        user_dict[user.id] = {'username': user.username, 
+                              'followers': user.public_metrics['followers_count'],
+                              'tweets': user.public_metrics['tweet_count'],
+                              'description': user.description,
+                              'location': user.location
+                             }
+    for tweet in response.data:
+        print(tweet.text)
+        author_info = user_dict[tweet.author_id]
+ #       text_sentiment = textblob(tweet.text)
+        # Put all of the information we want to keep in a single dictionary for each tweet
+        result.append({'author_id': tweet.author_id, 
+                       'username': author_info['username'],
+                       'author_followers': author_info['followers'],
+                       'author_tweets': author_info['tweets'],
+                       'author_description': author_info['description'],
+                       'author_location': author_info['location'],
+                       'text': tweet.text,
+                      # 'tweet_sentiment': text_sentiment,
+                       'created_at': tweet.created_at,
+                       'retweets': tweet.public_metrics['retweet_count'],
+                       'replies': tweet.public_metrics['reply_count'],
+                       'likes': tweet.public_metrics['like_count'],
+                       'quote_count': tweet.public_metrics['quote_count']
+                      })
+
