@@ -1,0 +1,30 @@
+{
+  "configurations": [
+    {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "PowerShell Attach Interactive Session Runspace",
+      "type": "PowerShell",
+      "request": "attach",
+      "processId": "current"
+    },
+    {
+      "name": "PowerShell Interactive Session",
+      "type": "PowerShell",
+      "request": "launch",
+      "cwd": ""
+    },
+    {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    }
+  ]
+}
