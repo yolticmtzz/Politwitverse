@@ -1,15 +1,33 @@
 
-twitter api key
-y8iMAF2ecmEZVQXKduP10C4s9
+twitter api key consumer
+anvCaAUUuYqG3xLR7dNAzR0dr
 
-twitter api secret
-vcyW2RpxAlXBm0Yu71eF8jtXscEejzCoIFDFVJp20WOMomlYvd
+twitter api secret consumer
+ULtEkEdycJzC08cyebSg1ExdOVgCg5pUG0qtLPnLta24ClNDqr
 
 bearer token
 AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAKAMZyNc9%2FF0wV%2Bzp9y2jcPwYG9U%3Dvvv4YqNOg5ZBuzznjuIwttR5UL6ESPN96ceQQaEeJ1Kng0PeDQ
 
 access token
-1469761271709028359-D2EzRWZ0WYmyNE9pbwvGplaNGua9LU
+1469761271709028359-FrJt9sku3toFacDx1tdvmSPc273pKf
 
 access token secret
-XWkcVYNZDU0V4Qb1WouQSdq8nmZPYx39clDhlBU0iT8qm
+mlblwNEQ21A6IrmC4boX42Rctpq0WLNMfTsoOSmOwPrAa
+
+oath2 client secretu-kbhI568QREAMDAdXezv9Ay7kgiUE8io0n1suu1UF0EXk-eqc
+
+client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAKAMZyNc9%2FF0wV%2Bzp9y2jcPwYG9U%3Dvvv4YqNOg5ZBuzznjuIwttR5UL6ESPN96ceQQaEeJ1Kng0PeDQ', 
+                       consumer_key='anvCaAUUuYqG3xLR7dNAzR0dr', 
+                       consumer_secret='ULtEkEdycJzC08cyebSg1ExdOVgCg5pUG0qtLPnLta24ClNDqr', 
+                       access_token='1469761271709028359-FrJt9sku3toFacDx1tdvmSPc273pKf', 
+                       access_token_secret='mlblwNEQ21A6IrmC4boX42Rctpq0WLNMfTsoOSmOwPrAa')
+
+
+response = client.search_recent_tweets(query=query,
+                                       tweet_fields=['attachments','author_id','context_annotations','conversation_id','created_at','entities','geo,id','in_reply_to_user_id','lang','possibly_sensitive','public_metrics','referenced_tweets','reply_settings','source','text','withheld'],
+                                        user_fields=['created_at','description','entities','id','location,name','pinned_tweet_id','profile_image_url','url','username','verified','withheld'],
+                                        expansions=['attachments.poll_ids','attachments.media_keys','author_id','geo.place_id','in_reply_to_user_id','referenced_tweets.id','entities.mentions.username','referenced_tweets.id.author_id'],
+                                        media_fields=['duration_ms','height','media_key','preview_image_url','promoted_metrics','public_metrics','type,url'],
+                                        place_fields=['contained_within,country','country_code','full_name','geo,id','name','place_type'],
+                                        poll_fields=['duration_minutes','end_datetime','id,options','voting_status'], 
+                                        max_results=10)
