@@ -15,9 +15,10 @@ from re import search
 #nltk.download('vader_lexicon')
 
 def print_tweet_data():
-    print(tweet_text)
-    print(tweet_sentiment_compound)
-    print('\n')
+    print(tweet_id)
+    #print(tweet_text)
+    #print(tweet_sentiment_compound)
+    #print('\n')
     
 def remove_whitespace(text):
     return  " ".join(text.split())
@@ -52,7 +53,6 @@ def hydrate_context(jj): #accepts tweet.annotations and returns a list of annota
     final_list = []
     i=0
     while i < len(context2):
-        print(context2[i])
         temp_context = context2[i]
         if search("Entit", temp_context):
             temp_context = ""
@@ -60,7 +60,6 @@ def hydrate_context(jj): #accepts tweet.annotations and returns a list of annota
             temp_context = ""
         if search("Nelson", temp_context):
             temp_context = ""
-            print('in entities')
         if search(("name: "), temp_context):
             temp_context2 = temp_context.replace("name: ", "")
             context_list.append(temp_context2.strip())
@@ -158,26 +157,15 @@ def makeitastring(wannabestring):
   return(convertedstring)
 
 #query filter
-#query = '@LaurenArthurMO OR @Dougbeck562 OR @RickBrattin OR @justinbrownmo OR @EricBurlison OR @MikeCierpiot OR @SandyCrawford2 OR @BillEigel OR @SenatorEslinger OR @votegannon OR @DLHoskins OR @lincolnhough OR @Koenig4MO OR @TonyForMissouri OR @KarlaMayMO4 OR @SenAngelaMosley OR @bobondermo OR @gregrazer OR @hrehder OR @RobertsforSTL OR @calebrowden OR @JillSchupp OR @beedubyah1967 OR @BrianWilliamsMO'
+#query = '@LaurenArthurMO OR @Dougbeck562 OR @RickBrattin OR @justinbrownmo OR @EricBurlison OR @MikeCierpiot OR @SandyCrawford2 OR @BillEigel OR @SenatorEslinger OR @votegannon OR @DLHoskins OR @lincolnhough OR @Koenig4MO OR @TonyForMissouri OR @KarlaMayMO4 OR @SenAngelaMosley OR @bobondermo OR @gregrazer OR @hrehder OR @RobertsforSTL OR @calebrowden OR @JillSchupp OR @beedubyah1967 OR @BrianWilliamsMO -is:retweet'
 
-query = 'missouri teachers -is:retweet'
+#query = 'missouri education -is:retweet'
 
 client = tweepy.Client(
 bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
-
-
-
-response = client.search_recent_tweets(
-                                       query=query,
-                                       tweet_fields=['attachments','author_id','context_annotations','conversation_id','created_at','entities','geo,id','in_reply_to_user_id','lang','possibly_sensitive','public_metrics','referenced_tweets','reply_settings','source','text','withheld'],
-                                       user_fields=['created_at','description','entities,id','location,name','pinned_tweet_id','profile_image_url','protected,public_metrics','url','username','verified','withheld'],
-                                       expansions=['attachments.poll_ids','attachments.media_keys','author_id','geo.place_id','in_reply_to_user_id','referenced_tweets.id','entities.mentions.username','referenced_tweets.id.author_id'],
-                                       media_fields=['duration_ms','height','media_key','preview_image_url','promoted_metrics','public_metrics','type,url'],
-                                       place_fields=['contained_within,country','country_code','full_name','geo,id','name','place_type'],
-                                       poll_fields=['duration_minutes','end_datetime','id,options','voting_status'], 
-                                       max_results=100
-                                       )
-
+query = "missouri covid -is:retweet"
+ 
+#response = client.search_recent_tweets(query=query,tweet_fields=['attachments','author_id','context_annotations','conversation_id','created_at','entities','geo,id','in_reply_to_user_id','lang','possibly_sensitive','public_metrics','referenced_tweets','reply_settings','source','text','withheld'],user_fields=['created_at','description','entities,id','location,name','pinned_tweet_id','profile_image_url','protected,public_metrics','url','username','verified','withheld'],expansions=['attachments.poll_ids','attachments.media_keys','author_id','geo.place_id','in_reply_to_user_id','referenced_tweets.id','entities.mentions.username','referenced_tweets.id.author_id'],media_fields=['duration_ms','height','media_key', 'preview_image_url','promoted_metrics','public_metrics','type,url'],place_fields=['contained_within,country','country_code','full_name','geo,id','name','place_type'],poll_fields=['duration_minutes','end_datetime','id','options','voting_status'],max_results=100)
 
 ent_dict =  [] #dictionary for entities in response.data
 tweet_dict = [] #dictionary for tweets in response.data
@@ -196,140 +184,130 @@ tweet_column_names = ["tweet_id", "tweet_created_at", "tweet_text", "tweet_lang"
 
 df = pd.DataFrame(columns = tweet_column_names)
 
-users = {u['id']: u for u in response.includes['users']}
+response = client.search_recent_tweets(query=query,tweet_fields=['attachments','author_id','context_annotations','conversation_id','created_at','entities','geo,id','in_reply_to_user_id','lang','possibly_sensitive','public_metrics','referenced_tweets','reply_settings','source','text','withheld'],user_fields=['created_at','description','entities,id','location,name','pinned_tweet_id','profile_image_url','protected,public_metrics','url','username','verified','withheld'],expansions=['attachments.poll_ids','attachments.media_keys','author_id','geo.place_id','in_reply_to_user_id','referenced_tweets.id','entities.mentions.username','referenced_tweets.id.author_id'],media_fields=['duration_ms','height','media_key', 'preview_image_url','promoted_metrics','public_metrics','type,url'],place_fields=['contained_within,country','country_code','full_name','geo,id','name','place_type'],poll_fields=['duration_minutes','end_datetime','id','options','voting_status'],max_results=10)
 
-         
-for tweet in response.data:    
+   
+users = {u['id']: u for u in response.includes['users']}         
+#for tweet in response.data:  
+for tweet in tweepy.Paginator(client.search_recent_tweets, "covid", max_results=10).flatten(limit=2):
     if users[tweet.author_id]:
         user = users[tweet.author_id]
-        print(tweet.text)
-        print(tweet.author_id)
-        print(user.id)
-        print('\n')
-
         ent_dict = []
         tweet_dict = tweet.data
         ent_dict = tweet.entities
 
-        if 'public_metrics' in tweet_dict:
-                     public_metrics_dict = (tweet_dict['public_metrics'])
-                     tweet_retweet_count = public_metrics_dict.get('retweet_count') #
-                     tweet_like_count = public_metrics_dict.get('like_count') #
-                     tweet_quote_count = public_metrics_dict.get('quote_count') #
-                     tweet_reply_count = public_metrics_dict.get('reply_count') #
-        else:
-            tweet_retweet_count = None
-            tweet_like_count = None
-            tweet_quote_count = None
-            tweet_reply_count = None    
-                                    
-    #assign referenced_tweets
-        tweet_reference_soup = tweet.referenced_tweets
-        if tweet_reference_soup is not None:
-                print("referenced tweet exists")
-                tweet_reference = referenced_hydrate(tweet_reference_soup)
-                tweet_reference_type = tweet_reference[0] #
-                tweet_reference_id = tweet_reference[1] #
-        else:
-                print("referenced tweets does not exist")
-                tweet_reference_type = None
-                tweet_reference_id = None
+    if 'public_metrics' in tweet_dict:
+                public_metrics_dict = (tweet_dict['public_metrics'])
+                tweet_retweet_count = public_metrics_dict.get('retweet_count') #
+                tweet_like_count = public_metrics_dict.get('like_count') #
+                tweet_quote_count = public_metrics_dict.get('quote_count') #
+                tweet_reply_count = public_metrics_dict.get('reply_count') #
+    else:
+        tweet_retweet_count = None
+        tweet_like_count = None
+        tweet_quote_count = None
+        tweet_reply_count = None    
+                                
+#assign referenced_tweets
+    tweet_reference_soup = tweet.referenced_tweets
+    if tweet_reference_soup is not None:
+            tweet_reference = referenced_hydrate(tweet_reference_soup)
+            tweet_reference_type = tweet_reference[0] #
+            tweet_reference_id = tweet_reference[1] #
+    else:
+            tweet_reference_type = None
+            tweet_reference_id = None
 
-        #assign context_annotations
-        tweet_context_annotations = tweet.context_annotations
-        temp_tweet_context_annotations= hydrate_context(tweet.context_annotations) #returns list of contexts, domain ids, and entity ids
+    #assign context_annotations
+    tweet_context_annotations = tweet.context_annotations
+    temp_tweet_context_annotations= hydrate_context(tweet.context_annotations) #returns list of contexts, domain ids, and entity ids
+    
+    if len(temp_tweet_context_annotations[0]) > 0:
+        tweet_annotations = temp_tweet_context_annotations[0]
+    else:
+        tweet_annotations = ""
         
-        if len(temp_tweet_context_annotations[0]) > 0:
-            tweet_annotations = temp_tweet_context_annotations[0]
-        else:
-            tweet_annotations = ""
-            
-        if len(temp_tweet_context_annotations[1]) > 0:
-            domain_ids = temp_tweet_context_annotations[1]
-        else:
-            domain_ids = ""
-        
-        if len(temp_tweet_context_annotations[2]) > 0:
-            entity_ids = temp_tweet_context_annotations[0]
-        else:
-            entity_ids = ""
-            
+    if len(temp_tweet_context_annotations[1]) > 0:
         domain_ids = temp_tweet_context_annotations[1]
-        entity_ids = temp_tweet_context_annotations[2]
+    else:
+        domain_ids = ""
+    
+    if len(temp_tweet_context_annotations[2]) > 0:
+        entity_ids = temp_tweet_context_annotations[0]
+    else:
+        entity_ids = ""
         
+    domain_ids = temp_tweet_context_annotations[1]
+    entity_ids = temp_tweet_context_annotations[2]
     
-        #assign tweet_fields 
-        tweet_created_at = tweet.created_at #
-        tweet_lang = tweet.lang #
-        tweet_reply_settings = tweet.reply_settings #
-        tweet_id = tweet.id #
-        tweet_source = tweet.source #
-        tweet_conversation_id = tweet.conversation_id #
-        tweet_text = tweet.text #
-        tweet_user = tweet.author_id #
-        tweet_in_response_to_user_id = tweet.in_reply_to_user_id#
-            
-        ######These two functions while separate should be ran together; however instead of creating one function want the option to just get back clean text
-        tweet_clean_text = clean_tweets(tweet.text) #
-        tweet_sentiment_all = tweet_sentiment_analyzer(tweet_clean_text) #
-        tweet_sentiment_compound = tweet_sentiment_all.get('compound') #                              
+
+    #assign tweet_fields 
+    tweet_created_at = tweet.created_at #
+    tweet_lang = tweet.lang #
+    tweet_reply_settings = tweet.reply_settings #
+    tweet_id = tweet.id #
+    tweet_source = tweet.source #
+    tweet_conversation_id = tweet.conversation_id #
+    tweet_text = tweet.text #
+    tweet_user = tweet.author_id #
+    tweet_in_response_to_user_id = tweet.in_reply_to_user_id#
+        
+    ######These two functions while separate should be ran together; however instead of creating one function want the option to just get back clean text
+    tweet_clean_text = clean_tweets(tweet.text) #
+    tweet_sentiment_all = tweet_sentiment_analyzer(tweet_clean_text) #
+    tweet_sentiment_compound = tweet_sentiment_all.get('compound') #                              
+
+    #assign user fields to tweet 
+    tweet_user_id = user.id            
+    tweet_username = user.username
+    tweet_user_tweet_count = user.public_metrics['tweet_count']
+    tweet_user_description = user.description
+    tweet_user_location = user.location
+    tweet_user_created_at = user.created_at
+    tweet_user_pinned_tweet = user.pinned_tweet_id
+    tweet_user_profile_url = user.profile_image_url
+    tweet_user_verified = user.verified
+    tweet_user_listed_count = user.public_metrics['listed_count']
+    tweet_user_following_count = user.public_metrics['following_count']
+    tweet_user_followers_count = user.public_metrics['followers_count']   
+
+    if 'mentions' in ent_dict:
+            t_mentions = ent_dict.get('mentions')
+            tweet_mentions = mention_hydrate(t_mentions) #
+
+    else:
+            tweet_mentions = None
+                
+                
+    if 'hashtags' in ent_dict is not None: #is not None needed????
+            t_hashtags = ent_dict.get('hashtags')  
+            tweet_hashtags = hashtag_hydrate(t_hashtags) #
+                
+    else:
+            tweet_hashtags = None
+
+    if 'annotations' in ent_dict:
+            t_annotations = ent_dict.get('annotations')   
+            tweet_annotations = annotations_hydrate(t_annotations) #
+
+    else:
+            tweet_annotations = None
+
+    if 'urls' in ent_dict:
+            t_urls = ent_dict.get('urls')
+            tweet_urls = url_hydrate(t_urls) #
+    else:
+            tweet_urls = None     
+
+    new_row = {"tweet_id":tweet_id, "tweet_created_at":tweet_created_at, "tweet_text":tweet_text, "tweet_lang":tweet_lang, "tweet_source":tweet_source, "tweet_reply_settings":tweet_reply_settings, "tweet_conversation_id":tweet_conversation_id,"tweet_in_response_to_user":tweet_in_response_to_user_id,"tweet_username":tweet_username, "tweet_user_tweet_count":tweet_user_tweet_count, "tweet_user_description":tweet_user_description, "tweet_user_location":tweet_user_location, "tweet_user_created_at":tweet_user_created_at, "tweet_user_pinned_tweet":tweet_user_pinned_tweet, "tweet_user_profile_url":tweet_user_profile_url, "tweet_user_verified":tweet_user_verified, "tweet_user_listed_count":tweet_user_listed_count, "tweet_user_following_count":tweet_user_following_count, "tweet_user_followers_count":tweet_user_followers_count, "tweet_reply_count":tweet_reply_count, "tweet_like_count":tweet_like_count, "tweet_quote_count":tweet_quote_count, "tweet_reply_count":tweet_reply_count, "tweet_reference_type":tweet_reference_type, "tweet_reference_id":tweet_reference_id, "tweet_clean_text":tweet_clean_text, "tweet_sentiment_all":tweet_sentiment_all, "tweet_sentiment_compound":tweet_sentiment_compound, "tweet_hashtags":tweet_hashtags, "tweet_annotations":tweet_annotations, "tweet_urls":tweet_urls, "tweet_mentions":tweet_mentions,"tweet_user_id":tweet_user_id, "tweet_context_annotations":tweet_context_annotations,
+    "tweet_annotations":tweet_annotations, "domain_ids":domain_ids, "entity_ids":entity_ids}
     
-        #assign user fields to tweet 
-        tweet_user_id = user.id            
-        tweet_username = user.username
-        tweet_user_tweet_count = user.public_metrics['tweet_count']
-        tweet_user_description = user.description
-        tweet_user_location = user.location
-        tweet_user_created_at = user.created_at
-        tweet_user_pinned_tweet = user.pinned_tweet_id
-        tweet_user_profile_url = user.profile_image_url
-        tweet_user_verified = user.verified
-        tweet_user_listed_count = user.public_metrics['listed_count']
-        tweet_user_following_count = user.public_metrics['following_count']
-        tweet_user_followers_count = user.public_metrics['followers_count']   
-
-        if 'mentions' in ent_dict:
-                print("mentions exists")
-                t_mentions = ent_dict.get('mentions')
-                tweet_mentions = mention_hydrate(t_mentions) #
-
-        else:
-                print("mentions does not exist")
-                tweet_mentions = None
-                    
-                    
-        if 'hashtags' in ent_dict is not None: #is not None needed????
-                print("hashtags exists")
-                t_hashtags = ent_dict.get('hashtags')  
-                tweet_hashtags = hashtag_hydrate(t_hashtags) #
-                    
-        else:
-                print("hashtags does not exist")
-                tweet_hashtags = None
-
-        if 'annotations' in ent_dict:
-                print("annotations exists")
-                t_annotations = ent_dict.get('annotations')   
-                tweet_annotations = annotations_hydrate(t_annotations) #
-
-        else:
-                print("annotations does not exist")
-                tweet_annotations = None
-
-        if 'urls' in ent_dict:
-                print("urls exists")
-                t_urls = ent_dict.get('urls')
-                tweet_urls = url_hydrate(t_urls) #
-        else:
-                print("urls does not exist")
-                tweet_urls = None     
-
-        new_row = {"tweet_id":tweet_id, "tweet_created_at":tweet_created_at, "tweet_text":tweet_text, "tweet_lang":tweet_lang, "tweet_source":tweet_source, "tweet_reply_settings":tweet_reply_settings, "tweet_conversation_id":tweet_conversation_id,"tweet_in_response_to_user":tweet_in_response_to_user_id,"tweet_username":tweet_username, "tweet_user_tweet_count":tweet_user_tweet_count, "tweet_user_description":tweet_user_description, "tweet_user_location":tweet_user_location, "tweet_user_created_at":tweet_user_created_at, "tweet_user_pinned_tweet":tweet_user_pinned_tweet, "tweet_user_profile_url":tweet_user_profile_url, "tweet_user_verified":tweet_user_verified, "tweet_user_listed_count":tweet_user_listed_count, "tweet_user_following_count":tweet_user_following_count, "tweet_user_followers_count":tweet_user_followers_count, "tweet_reply_count":tweet_reply_count, "tweet_like_count":tweet_like_count, "tweet_quote_count":tweet_quote_count, "tweet_reply_count":tweet_reply_count, "tweet_reference_type":tweet_reference_type, "tweet_reference_id":tweet_reference_id, "tweet_clean_text":tweet_clean_text, "tweet_sentiment_all":tweet_sentiment_all, "tweet_sentiment_compound":tweet_sentiment_compound, "tweet_hashtags":tweet_hashtags, "tweet_annotations":tweet_annotations, "tweet_urls":tweet_urls, "tweet_mentions":tweet_mentions,"tweet_user_id":tweet_user_id, "tweet_context_annotations":tweet_context_annotations,
-        "tweet_annotations":tweet_annotations, "domain_ids":domain_ids, "entity_ids":entity_ids}
-                            
-        #append row to the dataframe
-        df = df.append(new_row, ignore_index=True)
-              
-df.to_csv('tweets_data96.csv', index=False)
+    print_tweet_data()    
+    #append row to the dataframe
+    df = df.append(new_row, ignore_index=True)
+    
+a = a + 1
+           
+df.to_csv('covid1.csv', index=False)
 
 print('Thank you for using Politwit1984.')        
