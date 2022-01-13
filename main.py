@@ -60,7 +60,7 @@ def hydrate_search_recent_tweet_data(tweet_data):
 
     for tweet in response.data:
         author_info = user_dict[tweet.author_id]
-        result.append({
+        tweet_dict.append({
                     'author_id': tweet.author_id, 
                     'username': author_info['username'],
                     'author_followers': author_info['followers'],

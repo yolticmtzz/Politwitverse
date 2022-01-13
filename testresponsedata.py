@@ -1,11 +1,43 @@
 import tweepy
 import re
+import preprocessor as p
+import nltk
+from nltk.corpus import stopwords
+import nltk
+import nltk
+
+nltk.download('vader_lexicon')
+
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+analyzer = SentimentIntensityAnalyzer()
+
+def remove_whitespace(text):
+    return  " ".join(text.split())
+
+def clean_tweets(tweet_text):
+  p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.RESERVED)
+  clean_tweet_text = p.clean(tweet_text)
+  #clean_tweet_text = p.parse(clean_text)
+  clean_tweeet_text = remove_whitespace(clean_tweet_text)
+  return(clean_tweet_text)
+
+
+def tweet_sentiment_analyzer(clean_text):
+  sentiment_scores = []
+  sentiment_scores = analyzer.polarity_scores(clean_text)
+  print
+  compound2 = sentiment_scores.get('compound')
+  print(compound2)
+  print(type(compound2))
+  return(compound2)
+
 
 def makeitastring(wannabestring):
   convertedstring = ''.join(map(str, wannabestring))
   return(convertedstring)
 
-query = 'covid'
+query = 'missouri schools -is:retweet'
 client = tweepy.Client(
 bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
 
@@ -32,7 +64,6 @@ for tweet in response.data:
     referenced_tweets = []
     #print(tweet.context_annotations)
     referenced_tweets = tweet.context_annotations
-    print(len(referenced_tweets))
     print('\n')
     if len(referenced_tweets) > 1:
         t = referenced_tweets[0]
@@ -40,11 +71,16 @@ for tweet in response.data:
         #tweet_type = t.replace("']{{}:", '')
         tt = {}
         tt = t
-        print(tt.keys())
-        print(type(tt))
-        print(tt.get('entity'))
-        print(tt.get('domain'))
-        print(tt)
+
+    clean_tweet = tweet.text
+    preprocessed_tweet = clean_tweets(clean_tweet)
+
+    print(preprocessed_tweet)
+    tweet_sentiment = tweet_sentiment_analyzer(preprocessed_tweet)
+    print(tweet_sentiment.get('compound'))
+    print(tweet_sentiment)
+    print('\n')
+  
     
 
     #print(tweet_type)
