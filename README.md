@@ -14,6 +14,7 @@ v1
 7. Connect to service such as legiscan to monitor legislation
 8. Connect to event hub and azure streaming analytics to insert into cloud infrastructure
 9. Currently using humantic api to do trait analysis on users; however, it is expensive and looking to find an open source solution or create one
+10. Stream live updates to find trends
 
 v2
 1. create version for public to use to monitor their local politicians
