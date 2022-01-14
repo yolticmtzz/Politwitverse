@@ -12,13 +12,7 @@ async def run():
         event_data_batch = await producer.create_batch()
 
         # Add events to the batch.
-        event_data_batch.add(''
-        {
-            "author_id": "3507009554",
-            "id": "1481684676720803843",
-            "text": "RT @nhbaptiste: this tweet is designed to get conservatives moralizing about crime so it conveniently leaves out that 301 of those officers…",
-            "source": "Twitter for iPhone"
-        }'
+        event_data_batch.add('{"author_id": "3507009554","id": "1481684676720803843","text": "RT @nhbaptiste: this tweet is designed to get conservatives moralizing about crime so it conveniently leaves out that 301 of those officers…","source": "Twitter for iPhone"}')
 
              
         # Send the batch of events to the event hub.
