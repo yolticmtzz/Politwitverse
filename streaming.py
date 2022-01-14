@@ -26,6 +26,6 @@ printer = IDPrinter(
   API_KEY, API_SECRET_KEY,
   ACCESS_TOKEN, ACCESS_TOKEN_SECRET
 )
-printer.filter(track=['missouri teachers'],languages = ["en"])
+printer.filter(track=['missouri'],languages = ["en"])
 
 

@@ -195,7 +195,7 @@ user_dict= {}
 analyzer = SentimentIntensityAnalyzer()
 df = pd.DataFrame()
 
-tweet_column_names = ["tweet_id", "tweet_created_at", "tweet_text", "tweet_lang", "tweet_source", "tweet_reply_settings", "tweet_conversation_id",      "tweet_in_response_to_user", "tweet_username", "tweet_user_tweet_count", "tweet_user_description", "tweet_user_location", "tweet_user_created_at", "tweet_user_pinned_tweet", "tweet_user_profile_url", "tweet_user_verified", "tweet_user_listed_count", "tweet_user_following_count", "tweet_user_followers_count", "tweet_reply_count", "tweet_like_count", "tweet_quote_count", "tweet_reply_count", "tweet_reference_type", "tweet_reference_id", "tweet_clean_text", "tweet_sentiment_all", "tweet_sentiment_compound", "tweet_hashtags", "tweet_annotations", "tweet_urls", "tweet_mentions", "tweet_user_id", "tweet_context_annotations", "tweet_annotations", "domain_ids", "entity_ids"]
+tweet_column_names = ["tweet_id", "tweet_created_at", "tweet_text", "tweet_lang", "tweet_source", "tweet_reply_settings", "tweet_conversation_id", "tweet_in_response_to_user_id", "tweet_username", "tweet_user_tweet_count", "tweet_user_description", "tweet_user_location", "tweet_user_created_at", "tweet_user_pinned_tweet", "tweet_user_profile_url", "tweet_user_verified", "tweet_user_listed_count", "tweet_user_following_count", "tweet_user_followers_count", "tweet_reply_count", "tweet_like_count", "tweet_quote_count", "tweet_reply_count", "tweet_reference_type", "tweet_reference_id", "tweet_clean_text", "tweet_sentiment_all", "tweet_sentiment_compound", "tweet_hashtags", "tweet_annotations", "tweet_urls", "tweet_mentions", "tweet_user_id", "tweet_context_annotations", "tweet_domain_ids", "tweet_entity_ids"]
 
 df = pd.DataFrame(columns = tweet_column_names)
 
@@ -245,14 +245,14 @@ for tweet in response.data:
         tweet_annotations = ""
         
     if len(temp_tweet_context_annotations[1]) > 0:
-        domain_ids = temp_tweet_context_annotations[1]
+        tweet_domain_ids = temp_tweet_context_annotations[1]
     else:
-        domain_ids = ""
+        tweet_domain_ids = ""
     
     if len(temp_tweet_context_annotations[2]) > 0:
-        entity_ids = temp_tweet_context_annotations[2]
+        tweet_entity_ids = temp_tweet_context_annotations[2]
     else:
-        entity_ids = ""
+        tweet_entity_ids = ""
         
     #domain_ids = temp_tweet_context_annotations[1]
     #entity_ids = temp_tweet_context_annotations[2]
@@ -265,14 +265,15 @@ for tweet in response.data:
     tweet_id = tweet.id #
     tweet_source = tweet.source #
     tweet_conversation_id = tweet.conversation_id #
-    tweet_text = remove_ASCII(tweet.text) #
+    tweet_text = tweet.text.encode('utf-8') #
     tweet_user = tweet.author_id #
     tweet_in_response_to_user_id = tweet.in_reply_to_user_id #
         
     ######These two functions while separate should be ran together; however instead of creating one function want the option to just get back clean text
     tweet_clean_text = clean_tweets(tweet.text) #
     tweet_sentiment_all = tweet_sentiment_analyzer(tweet_clean_text) #
-    tweet_sentiment_compound = tweet_sentiment_all.get('compound') #                              
+    tweet_sentiment_compound = tweet_sentiment_all.get('compound') #   
+    print(tweet_sentiment_all)                           
 
     #assign user fields to tweet 
     tweet_user_id = user.id            
@@ -290,7 +291,7 @@ for tweet in response.data:
 
     
     #print(ent_dict)
-    if 'mentions' in ent_dict.items():
+    if 'mentions' in ent_dict:
             t_mentions = ent_dict.get('mentions')
             tweet_mentions = mention_hydrate(t_mentions) #
             
@@ -318,8 +319,8 @@ for tweet in response.data:
     else:
             tweet_urls = None     
 
-    new_row = {"tweet_id":tweet_id, "tweet_created_at":tweet_created_at, "tweet_text":tweet_text, "tweet_lang":tweet_lang, "tweet_source":tweet_source, "tweet_reply_settings":tweet_reply_settings, "tweet_conversation_id":tweet_conversation_id,"tweet_in_response_to_user":tweet_in_response_to_user_id,"tweet_username":tweet_username, "tweet_user_tweet_count":tweet_user_tweet_count, "tweet_user_description":tweet_user_description, "tweet_user_location":tweet_user_location, "tweet_user_created_at":tweet_user_created_at, "tweet_user_pinned_tweet":tweet_user_pinned_tweet, "tweet_user_profile_url":tweet_user_profile_url, "tweet_user_verified":tweet_user_verified, "tweet_user_listed_count":tweet_user_listed_count, "tweet_user_following_count":tweet_user_following_count, "tweet_user_followers_count":tweet_user_followers_count, "tweet_reply_count":tweet_reply_count, "tweet_like_count":tweet_like_count, "tweet_quote_count":tweet_quote_count, "tweet_reply_count":tweet_reply_count, "tweet_reference_type":tweet_reference_type, "tweet_reference_id":tweet_reference_id, "tweet_clean_text":tweet_clean_text, "tweet_sentiment_all":tweet_sentiment_all, "tweet_sentiment_compound":tweet_sentiment_compound, "tweet_hashtags":tweet_hashtags, "tweet_annotations":tweet_annotations, "tweet_urls":tweet_urls, "tweet_mentions":tweet_mentions,"tweet_user_id":tweet_user_id, "tweet_context_annotations":tweet_context_annotations,
-    "tweet_annotations":tweet_annotations, "domain_ids":domain_ids, "entity_ids":entity_ids}
+    new_row = {"tweet_id":tweet_id, "tweet_created_at":tweet_created_at, "tweet_text":tweet_text, "tweet_lang":tweet_lang, "tweet_source":tweet_source, "tweet_reply_settings":tweet_reply_settings, "tweet_conversation_id":tweet_conversation_id,"tweet_in_response_to_user_id":tweet_in_response_to_user_id,"tweet_username":tweet_username, "tweet_user_tweet_count":tweet_user_tweet_count, "tweet_user_description":tweet_user_description, "tweet_user_location":tweet_user_location, "tweet_user_created_at":tweet_user_created_at, "tweet_user_pinned_tweet":tweet_user_pinned_tweet, "tweet_user_profile_url":tweet_user_profile_url, "tweet_user_verified":tweet_user_verified, "tweet_user_listed_count":tweet_user_listed_count, "tweet_user_following_count":tweet_user_following_count, "tweet_user_followers_count":tweet_user_followers_count, "tweet_reply_count":tweet_reply_count, "tweet_like_count":tweet_like_count, "tweet_quote_count":tweet_quote_count,  "tweet_reference_type":tweet_reference_type, "tweet_reference_id":tweet_reference_id, "tweet_clean_text":tweet_clean_text, "tweet_sentiment_all":tweet_sentiment_all, "tweet_sentiment_compound":tweet_sentiment_compound, "tweet_hashtags":tweet_hashtags, "tweet_annotations":tweet_annotations, "tweet_urls":tweet_urls, "tweet_mentions":tweet_mentions,"tweet_user_id":tweet_user_id, "tweet_context_annotations":tweet_context_annotations,
+    "tweet_domain_ids":tweet_domain_ids, "tweet_entity_ids":tweet_entity_ids}
     
     #print_tweet_data()    
     #append row to the dataframe
@@ -327,6 +328,6 @@ for tweet in response.data:
     
 
            
-#df.to_csv('reps3.csv', index=False)
+#df.to_csv('reps5.csv', index=False)
 
 print('Thank you for using Politwit1984.')        
