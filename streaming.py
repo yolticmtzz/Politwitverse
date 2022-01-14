@@ -19,6 +19,8 @@ class IDPrinter(tweepy.Stream):
         print(status.text)
         print(status.entities)
         print(status.user.screen_name)
+        print(status.retweeted)
+        print(status.geo)
 
 
 
@@ -26,6 +28,6 @@ printer = IDPrinter(
   API_KEY, API_SECRET_KEY,
   ACCESS_TOKEN, ACCESS_TOKEN_SECRET
 )
-printer.filter(track=['missouri teachers'],languages = ["en"])
+printer.filter(track=['missouri'],languages=["en"])
 
 
