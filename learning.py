@@ -234,8 +234,11 @@ for tweet in response.data:
     else:
             tweet_reference_type = None
             tweet_reference_id = None
+            
+    print(tweet.context_annotations)
 
     #assign context_annotations
+
     tweet_context_annotations = tweet.context_annotations
     temp_tweet_context_annotations= hydrate_context(tweet.context_annotations) #returns list of contexts, domain ids, and entity ids
     
@@ -257,6 +260,7 @@ for tweet in response.data:
     #domain_ids = temp_tweet_context_annotations[1]
     #entity_ids = temp_tweet_context_annotations[2]
     
+    #print(temp_tweet_context_annotations)
 
     #assign tweet_fields 
     tweet_created_at = tweet.created_at #
@@ -289,7 +293,8 @@ for tweet in response.data:
     tweet_user_following_count = user.public_metrics['following_count']
     tweet_user_followers_count = user.public_metrics['followers_count']   
 
-    
+    #print(tweet.entities['mentions']) possibly another way to check for entitiy data if it comes back with empty error
+
     #print(ent_dict)
     if 'mentions' in ent_dict:
             t_mentions = ent_dict.get('mentions')
