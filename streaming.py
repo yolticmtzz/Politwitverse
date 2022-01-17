@@ -23,6 +23,99 @@
 # possibly_sensitive : Indicates whether the status is sensitive or not.
 # lang : The language of the status. 
 
+# SELECT TOP (1000) [tweet_created_at]
+#       ,[tweet_id] #
+#       ,[tweet_text] #
+#       ,[tweet_lang] #
+#       ,[tweet_source] #
+#       ,[tweet_reply_settings]
+#       ,[tweet_conversation_id]
+#       ,[tweet_in_repsonse_to_user_id]
+#       ,[tweet_username] #
+#       ,[tweet_user_tweet_count]
+#       ,[tweet_user_description] #
+#       ,[tweet_user_created_at]
+#       ,[tweet_user_location]
+#       ,[tweet_user_pinned_tweet]
+#       ,[tweet_user_profile_url]
+#       ,[tweet_user_verified] #
+#       ,[tweet_user_listed_count]
+#       ,[tweet_user_following_count]
+#       ,[tweet_user_followers_count]
+#       ,[tweet_reply_count]
+#       ,[tweet_like_count]
+#       ,[tweet_quote_count]
+#       ,[tweet_reference_type]
+#       ,[tweet_reference_id]
+#       ,[tweet_clean_text]
+#       ,[tweet_sentiment_all]
+#       ,[tweet_sentiment_compound]
+#       ,[tweet_hashtags]
+#       ,[tweet_urls]
+#       ,[tweet_annotations]
+#       ,[tweet_mentions]
+#       ,[tweet_user_id]
+#       ,[tweet_context_annotations]
+#       ,[tweet_domain_ids]
+#       ,[tweet_entity_ids]
+#       ,[query]
+#       ,[project]
+#       ,[tweet_entities]
+#       ,[tweet_source_url]
+#       ,[tweet_in_reply_to_status_id]
+#       ,[tweet_in_reply_to_screen_name]
+#       ,[tweet_user]
+#       ,[tweet_geo]
+#       ,[tweet_coordinates]
+#       ,[tweet_place]
+#       ,[tweet_is_quote_status]
+#       ,[tweet_retweet_count]
+#       ,[tweet_favorited]
+#       ,[tweet_retweeted]
+#       ,[jobtype]
+#   FROM [dbo].[tweet_all_up]
+
+# { "user": {
+#     "id": 6253282,
+#     "id_str": "6253282",
+#     "name": "Twitter API",
+#     "screen_name": "TwitterAPI",
+#     "location": "San Francisco, CA",
+#     "url": "https://developer.twitter.com",
+#     "description": "The Real Twitter API. Tweets about API changes, service issues and our Developer Platform. Don't get an answer? It's on my website.",
+#     "verified": true,
+#     "followers_count": 6129794,
+#     "friends_count": 12,
+#     "listed_count": 12899,
+#     "favourites_count": 31,
+#     "statuses_count": 3658,
+#     "created_at": "Wed May 23 06:01:13 +0000 2007",
+#     "utc_offset": null,
+#     "time_zone": null,
+#     "geo_enabled": false,
+#     "lang": "en",
+#     "contributors_enabled": false,
+#     "is_translator": false,
+#     "profile_background_color": "null",
+#     "profile_background_image_url": "null",
+#     "profile_background_image_url_https": "null",
+#     "profile_background_tile": null,
+#     "profile_link_color": "null",
+#     "profile_sidebar_border_color": "null",
+#     "profile_sidebar_fill_color": "null",
+#     "profile_text_color": "null",
+#     "profile_use_background_image": null,
+#     "profile_image_url": "null",
+#     "profile_image_url_https": "https://pbs.twimg.com/profile_images/942858479592554497/BbazLO9L_normal.jpg",
+#     "profile_banner_url": "https://pbs.twimg.com/profile_banners/6253282/1497491515",
+#     "default_profile": false,
+#     "default_profile_image": false,
+#     "following": null,
+#     "follow_request_sent": null,
+#     "notifications": null
+#   }
+# }
+
 from sqlalchemy import null
 import tweepy
 import pandas as pd
@@ -51,15 +144,37 @@ stream = tweepy.Stream(
 class IDPrinter(tweepy.Stream):
 
     def on_status(self, status):
+        if hasattr(status, "retweeted_status"):  # Check if Retweet
+            try:
+                print(status.retweeted_status.extended_tweet["full_text"])
+                tweet_text = status.retweeted_status.extended_tweet["full_text"]
+                tweet_retweeted = "TRUE"
+                print("retweeted")
+            except AttributeError:
+                print(status.retweeted_status.text)
+                tweet_text = status.retweeted_status.text
+                tweet_retweeted = "TRUE"
+                print("retweeted")
+        else:
+            try:
+                print(status.extended_tweet["full_text"])
+                tweet_text = status.extended_tweet["full_text"]
+                tweet_retweeted = "FALSE"
+                print("Original Tweet")
+            except AttributeError:
+                print(status.text)
+                tweet_text = status.text
+                tweet_retweeted = "FALSE"
+                print("Original Tweet")
         
         ###########################################################################################################################
-        query = 'Covid lang:en'
-        project = 'Covid Stream test'
+        query = 'missouri education lang:en'
+        project = 'missouri education intelligence'
         jobtype = "stream"
         ###########################################################################################################################
         
         tweet_id = status.id
-        tweet_text = status.text
+        #tweet_text = status.text #handling above
           
         ent_dict = status.entities
         #place_dict = status.place
@@ -96,7 +211,7 @@ class IDPrinter(tweepy.Stream):
         else:
             tweet_urls = None     
         
-
+        
         tweet_source = status.source
         tweet_source_url = status.source_url
         tweet_in_reply_to_status_id = status.in_reply_to_status_id
@@ -112,15 +227,14 @@ class IDPrinter(tweepy.Stream):
         tweet_retweet_count = status.retweet_count
         tweet_like_count = status.favorite_count
         tweet_favorited = status.favorited
-        tweet_retweeted = status.retweeted
         tweet_lang = status.lang
         tweet_created_at = status.created_at
         tweet_user_description = status.user.description
         tweet_clean_text = clean_tweets(tweet_text) #
         tweet_sentiment_all = tweet_sentiment_analyzer(tweet_clean_text) #
         tweet_sentiment_compound = tweet_sentiment_all.get('compound') # 
-        print(tweet_text)  
-        print(tweet_retweeted)
+        tweet_user_verified = status.user.verified
+
         
 
         print('\n')
@@ -137,9 +251,9 @@ class IDPrinter(tweepy.Stream):
         if row_count == 0:
             #print("It Does Not Exist")    
             count = crsr.execute("""
-            INSERT INTO TWEET_ALL_UP (tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound) 
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound).rowcount
+            INSERT INTO TWEET_ALL_UP (tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound, tweet_user_verified) 
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound, tweet_user_verified).rowcount
 
             #removing tweet_entities, tweet_user (can pull individual attributes), tweet_in_response_to_user_id (dict can't be inserted into SQL), tweet_place
 
@@ -261,5 +375,5 @@ ent_dict = []
 analyzer = SentimentIntensityAnalyzer()
 
 ################################################################################################################################
-printer.filter(track=['covid'],languages=["en"])
+printer.filter(track=['missouri education'],languages=["en"])
 ################################################################################################################################
