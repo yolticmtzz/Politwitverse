@@ -39,7 +39,7 @@
 #       ,[tweet_user_pinned_tweet]
 #       ,[tweet_user_profile_url]
 #       ,[tweet_user_verified] #
-#       ,[tweet_user_listed_count]
+#       ,[tweet_user_listed_count] #
 #       ,[tweet_user_following_count]
 #       ,[tweet_user_followers_count]
 #       ,[tweet_reply_count]
@@ -79,14 +79,14 @@
 #     "id": 6253282,
 #     "id_str": "6253282",
 #     "name": "Twitter API",
-#     "screen_name": "TwitterAPI",
+#     "screen_name": "TwitterAPI",  #
 #     "location": "San Francisco, CA",
 #     "url": "https://developer.twitter.com",
 #     "description": "The Real Twitter API. Tweets about API changes, service issues and our Developer Platform. Don't get an answer? It's on my website.",
 #     "verified": true,
-#     "followers_count": 6129794,
+#     "followers_count": 6129794, #
 #     "friends_count": 12,
-#     "listed_count": 12899,
+#     "listed_count": 12899, #
 #     "favourites_count": 31,
 #     "statuses_count": 3658,
 #     "created_at": "Wed May 23 06:01:13 +0000 2007",
@@ -140,7 +140,7 @@ stream = tweepy.Stream(
 )
 
 
-
+# TODO #10 must have better error detection and not fail on an exception
 class IDPrinter(tweepy.Stream):
 
     def on_status(self, status):
@@ -168,100 +168,104 @@ class IDPrinter(tweepy.Stream):
                 print("Original Tweet")
         
         ###########################################################################################################################
-        query = 'missouri education lang:en'
-        project = 'missouri education intelligence'
+        query = 'education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks lang:en'
+        project = 'realtime education analysis'
         jobtype = "stream"
         ###########################################################################################################################
         
-        tweet_id = status.id
-        #tweet_text = status.text #handling above
-          
-        ent_dict = status.entities
-        #place_dict = status.place
-
-        if 'user_mentions' in ent_dict:
-            t_mentions = ent_dict.get('user_mentions')
-            tweet_mentions = mention_hydrate(t_mentions) #
-            tweet_mentions = makeitastring(tweet_mentions)
-            
-        else:
-            tweet_mentions = None
+        if tweet_retweeted == "FALSE":  #only insert into database if it isn't a retweet
+        
+                tweet_id = status.id
+                tweet_user_followers_count = status.user.following_count
+                tweet_user_listed_count = status.user.listed_count
+                #tweet_text = status.text #handling above
                 
+                ent_dict = status.entities
+                #place_dict = status.place
+
+                if 'user_mentions' in ent_dict:
+                    t_mentions = ent_dict.get('user_mentions')
+                    tweet_mentions = mention_hydrate(t_mentions) #
+                    tweet_mentions = makeitastring(tweet_mentions)
+                    
+                else:
+                    tweet_mentions = None
+                        
+                        
+                if 'hashtags' in ent_dict: 
+                    t_hashtags = ent_dict.get('hashtags')  
+                    tweet_hashtags = hashtag_hydrate(t_hashtags) 
+                    tweet_hashtags = makeitastring(tweet_hashtags)
+                        
+                else:
+                    tweet_hashtags = None
+
+                # if place_dict:
+                #     t_place = place_dict.get('full_name')   
+                #     tweet_place = place_hydrate(t_place) 
+                #     tweet_place = makeitastring(tweet_place)
+                    
+                # else:
+                #     tweet_place = None
+
+                if 'urls' in ent_dict:
+                    t_urls = ent_dict.get('urls')
+                    tweet_urls = url_hydrate(t_urls) 
+                    tweet_urls = makeitastring(tweet_urls)
+                else:
+                    tweet_urls = None     
                 
-        if 'hashtags' in ent_dict: 
-            t_hashtags = ent_dict.get('hashtags')  
-            tweet_hashtags = hashtag_hydrate(t_hashtags) 
-            tweet_hashtags = makeitastring(tweet_hashtags)
+                tweet_user_location = status.user.location
+                tweet_source = status.source
+                tweet_source_url = status.source_url
+                tweet_in_reply_to_status_id = status.in_reply_to_status_id
+                tweet_in_response_to_user_id = status.in_reply_to_user_id
+                tweet_in_reply_to_screen_name = status.in_reply_to_screen_name
+                tweet_username = status.user.screen_name
+                tweet_user_location = status.user.location
+                tweet_user = status.user
+                tweet_geo = status.geo
+                tweet_coordinates = status.coordinates
+                tweet_place = status.place
+                tweet_is_quote_status = status.is_quote_status
+                tweet_retweet_count = status.retweet_count
+                tweet_like_count = status.favorite_count
+                tweet_favorited = status.favorited
+                tweet_lang = status.lang
+                tweet_created_at = status.created_at
+                tweet_user_description = status.user.description
+                tweet_clean_text = clean_tweets(tweet_text) #
+                tweet_sentiment_all = tweet_sentiment_analyzer(tweet_clean_text) #
+                tweet_sentiment_compound = tweet_sentiment_all.get('compound') # 
+                tweet_user_verified = status.user.verified
+
                 
-        else:
-            tweet_hashtags = None
 
-        # if place_dict:
-        #     t_place = place_dict.get('full_name')   
-        #     tweet_place = place_hydrate(t_place) 
-        #     tweet_place = makeitastring(tweet_place)
-              
-        # else:
-        #     tweet_place = None
+                print('\n')
 
-        if 'urls' in ent_dict:
-            t_urls = ent_dict.get('urls')
-            tweet_urls = url_hydrate(t_urls) 
-            tweet_urls = makeitastring(tweet_urls)
-        else:
-            tweet_urls = None     
-        
-        
-        tweet_source = status.source
-        tweet_source_url = status.source_url
-        tweet_in_reply_to_status_id = status.in_reply_to_status_id
-        tweet_in_response_to_user_id = status.in_reply_to_user_id
-        tweet_in_reply_to_screen_name = status.in_reply_to_screen_name
-        tweet_username = status.user.screen_name
-        tweet_user_location = status.user.location
-        tweet_user = status.user
-        tweet_geo = status.geo
-        tweet_coordinates = status.coordinates
-        tweet_place = status.place
-        tweet_is_quote_status = status.is_quote_status
-        tweet_retweet_count = status.retweet_count
-        tweet_like_count = status.favorite_count
-        tweet_favorited = status.favorited
-        tweet_lang = status.lang
-        tweet_created_at = status.created_at
-        tweet_user_description = status.user.description
-        tweet_clean_text = clean_tweets(tweet_text) #
-        tweet_sentiment_all = tweet_sentiment_analyzer(tweet_clean_text) #
-        tweet_sentiment_compound = tweet_sentiment_all.get('compound') # 
-        tweet_user_verified = status.user.verified
+                
+                #checking for tweet_id since it is primary key
+                crsr.execute(
+                    "SELECT tweet_id, COUNT(*) FROM tweet_all_up WHERE tweet_id = ? GROUP BY tweet_id",
+                    (tweet_id)
+                )
+                results = crsr.fetchall()
+                row_count = crsr.rowcount
+                # print("number of affected rows: {}".format(row_count))
+                if row_count == 0:
+                    #print("It Does Not Exist")    
+                    count = crsr.execute("""
+                    INSERT INTO TWEET_ALL_UP (tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound, tweet_user_verified, tweet_user_followers_count, tweet_user_listed_count) 
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                    tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound, tweet_user_verified, tweet_user_followers_count, tweet_user_listed_count).rowcount
 
-        
+                    #removing tweet_entities, tweet_user (can pull individual attributes), tweet_in_response_to_user_id (dict can't be inserted into SQL), tweet_place
 
-        print('\n')
+                #print('Rows inserted: ' + str(count))
+                    
+                crsr.commit()
 
-        
-        #checking for tweet_id since it is primary key
-        crsr.execute(
-            "SELECT tweet_id, COUNT(*) FROM tweet_all_up WHERE tweet_id = ? GROUP BY tweet_id",
-            (tweet_id)
-        )
-        results = crsr.fetchall()
-        row_count = crsr.rowcount
-        # print("number of affected rows: {}".format(row_count))
-        if row_count == 0:
-            #print("It Does Not Exist")    
-            count = crsr.execute("""
-            INSERT INTO TWEET_ALL_UP (tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound, tweet_user_verified) 
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound, tweet_user_verified).rowcount
-
-            #removing tweet_entities, tweet_user (can pull individual attributes), tweet_in_response_to_user_id (dict can't be inserted into SQL), tweet_place
-
-        #print('Rows inserted: ' + str(count))
-            
-        crsr.commit()
-
-        # cnxn.close()
+                # cnxn.close() # TODO #11 determine when connection to sql should be closed 
 
 
 
@@ -298,7 +302,7 @@ connection_string = textwrap.dedent('''
 cnxn: pyodbc.Connection = pyodbc.connect(connection_string)
 crsr: pyodbc.Cursor = cnxn.cursor()
 
-
+## TODO #9 need to figure out how to get place data out of the object as it isn't a dictionary
 def place_hydrate(entity_list):  
     x = 0 #list index
     i = 1 #list length
@@ -358,6 +362,7 @@ def makeitastring(wannabestring):
 def remove_whitespace(text):
     return  " ".join(text.split())
 
+# TODO #12 remove &amp from tweet text when it is being cleaned
 def clean_tweets(tweet_text):
   p.set_options(p.OPT.URL, p.OPT.MENTION)
   clean_tweet_text = p.clean(tweet_text)
@@ -375,5 +380,6 @@ ent_dict = []
 analyzer = SentimentIntensityAnalyzer()
 
 ################################################################################################################################
-printer.filter(track=['missouri education'],languages=["en"])
+#printer.filter(track=['covid'],languages=["en"])
+printer.filter(track=['education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks'],languages=["en"])
 ################################################################################################################################
