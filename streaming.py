@@ -1,121 +1,3 @@
-# created_at : The time the status was posted.
-# id : The ID of the status.
-# id_str : The ID of the status as a string.
-# text : The text of the status.
-# entities : The parsed entities of the status such as hashtags, URLs etc.
-# source : The source of the status.
-# source_url : The URL of the source of the status.
-# in_reply_to_status_id : The ID of the status being replied to.
-# in_reply_to_status_id_str : The ID of the status being replied to in as a string.
-# in_reply_to_user_id : The ID of the user being replied to.
-# in_reply_to_user_id_str : The ID of the user being replied to as a string.
-# in_reply_to_screen_name : The screen name of the user being replied to
-# user : The User object of the poster of the status.
-# geo : The geo object of the status.
-# coordinates : The coordinates of the status.
-# place : The place of the status.
-# contributors : The contributors of the status.
-# is_quote_status : Indicates whether the status is a quoted status or not.
-# retweet_count : The number of retweets of the status.
-# favorite_count : The number of likes of the status.
-# favorited : Indicates whether the status has been favourited by the authenticated user or not.
-# retweeted : Indicates whether the status has been retweeted by the authenticated user or not.
-# possibly_sensitive : Indicates whether the status is sensitive or not.
-# lang : The language of the status. 
-
-# SELECT TOP (1000) [tweet_created_at]
-#       ,[tweet_id] #
-#       ,[tweet_text] #
-#       ,[tweet_lang] #
-#       ,[tweet_source] #
-#       ,[tweet_reply_settings]
-#       ,[tweet_conversation_id]
-#       ,[tweet_in_repsonse_to_user_id]
-#       ,[tweet_username] #
-#       ,[tweet_user_tweet_count]
-#       ,[tweet_user_description] #
-#       ,[tweet_user_created_at]
-#       ,[tweet_user_location]
-#       ,[tweet_user_pinned_tweet]
-#       ,[tweet_user_profile_url]
-#       ,[tweet_user_verified] #
-#       ,[tweet_user_listed_count] #
-#       ,[tweet_user_following_count]
-#       ,[tweet_user_followers_count]
-#       ,[tweet_reply_count]
-#       ,[tweet_like_count]
-#       ,[tweet_quote_count]
-#       ,[tweet_reference_type]
-#       ,[tweet_reference_id]
-#       ,[tweet_clean_text]
-#       ,[tweet_sentiment_all]
-#       ,[tweet_sentiment_compound]
-#       ,[tweet_hashtags]
-#       ,[tweet_urls]
-#       ,[tweet_annotations]
-#       ,[tweet_mentions]
-#       ,[tweet_user_id]
-#       ,[tweet_context_annotations]
-#       ,[tweet_domain_ids]
-#       ,[tweet_entity_ids]
-#       ,[query]
-#       ,[project]
-#       ,[tweet_entities]
-#       ,[tweet_source_url]
-#       ,[tweet_in_reply_to_status_id]
-#       ,[tweet_in_reply_to_screen_name]
-#       ,[tweet_user]
-#       ,[tweet_geo]
-#       ,[tweet_coordinates]
-#       ,[tweet_place]
-#       ,[tweet_is_quote_status]
-#       ,[tweet_retweet_count]
-#       ,[tweet_favorited]
-#       ,[tweet_retweeted]
-#       ,[jobtype]
-#   FROM [dbo].[tweet_all_up]
-
-# { "user": {
-#     "id": 6253282,
-#     "id_str": "6253282",
-#     "name": "Twitter API",
-#     "screen_name": "TwitterAPI",  #
-#     "location": "San Francisco, CA",
-#     "url": "https://developer.twitter.com",
-#     "description": "The Real Twitter API. Tweets about API changes, service issues and our Developer Platform. Don't get an answer? It's on my website.",
-#     "verified": true,
-#     "followers_count": 6129794, #
-#     "friends_count": 12,
-#     "listed_count": 12899, #
-#     "favourites_count": 31,
-#     "statuses_count": 3658,
-#     "created_at": "Wed May 23 06:01:13 +0000 2007",
-#     "utc_offset": null,
-#     "time_zone": null,
-#     "geo_enabled": false,
-#     "lang": "en",
-#     "contributors_enabled": false,
-#     "is_translator": false,
-#     "profile_background_color": "null",
-#     "profile_background_image_url": "null",
-#     "profile_background_image_url_https": "null",
-#     "profile_background_tile": null,
-#     "profile_link_color": "null",
-#     "profile_sidebar_border_color": "null",
-#     "profile_sidebar_fill_color": "null",
-#     "profile_text_color": "null",
-#     "profile_use_background_image": null,
-#     "profile_image_url": "null",
-#     "profile_image_url_https": "https://pbs.twimg.com/profile_images/942858479592554497/BbazLO9L_normal.jpg",
-#     "profile_banner_url": "https://pbs.twimg.com/profile_banners/6253282/1497491515",
-#     "default_profile": false,
-#     "default_profile_image": false,
-#     "following": null,
-#     "follow_request_sent": null,
-#     "notifications": null
-#   }
-# }
-
 from sqlalchemy import null
 import tweepy
 import pandas as pd
@@ -168,16 +50,27 @@ class IDPrinter(tweepy.Stream):
                 print("Original Tweet")
         
         ###########################################################################################################################
-        query = 'education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks lang:en'
-        project = 'realtime education analysis'
+        # query = '''education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks lang:en'''
+        # project = 'realtime education analysis'
+        # jobtype = "stream"
+        
+        query = 'Arizona Cardinals LA and Las Angeles Cardinals Football'
+        project = 'playoff game prediction'
         jobtype = "stream"
+        
+        # query = 'missouri covid lang:en'
+        # project = 'missouri covid test data'
+        # jobtype = "stream"
+        
+        # query = 'covid lang:en'
+        # project = 'covid test data'
+        # jobtype = "stream"
         ###########################################################################################################################
         
         if tweet_retweeted == "FALSE":  #only insert into database if it isn't a retweet
         
                 tweet_id = status.id
-                tweet_user_followers_count = status.user.following_count
-                tweet_user_listed_count = status.user.listed_count
+
                 #tweet_text = status.text #handling above
                 
                 ent_dict = status.entities
@@ -200,6 +93,7 @@ class IDPrinter(tweepy.Stream):
                 else:
                     tweet_hashtags = None
 
+                # TODO #13 parse data out of place object
                 # if place_dict:
                 #     t_place = place_dict.get('full_name')   
                 #     tweet_place = place_hydrate(t_place) 
@@ -215,18 +109,16 @@ class IDPrinter(tweepy.Stream):
                 else:
                     tweet_urls = None     
                 
-                tweet_user_location = status.user.location
+
                 tweet_source = status.source
                 tweet_source_url = status.source_url
                 tweet_in_reply_to_status_id = status.in_reply_to_status_id
-                tweet_in_response_to_user_id = status.in_reply_to_user_id
                 tweet_in_reply_to_screen_name = status.in_reply_to_screen_name
-                tweet_username = status.user.screen_name
-                tweet_user_location = status.user.location
-                tweet_user = status.user
+                tweet_username = status.user.screen_name                
+                #tweet_user = status.user
                 tweet_geo = status.geo
                 tweet_coordinates = status.coordinates
-                tweet_place = status.place
+                #tweet_place = status.place
                 tweet_is_quote_status = status.is_quote_status
                 tweet_retweet_count = status.retweet_count
                 tweet_like_count = status.favorite_count
@@ -238,9 +130,28 @@ class IDPrinter(tweepy.Stream):
                 tweet_sentiment_all = tweet_sentiment_analyzer(tweet_clean_text) #
                 tweet_sentiment_compound = tweet_sentiment_all.get('compound') # 
                 tweet_user_verified = status.user.verified
-
+                tweet_user_followers_count = status.user.followers_count
+                tweet_user_listed_count = status.user.listed_count
                 
-
+                tweet_user_location = status.user.location
+                tweet_user_id = status.user.id
+                
+                tweet_in_response_to_user_id = status.in_reply_to_user_id
+                
+                #tweet_user_url = status.user.url #doublecheck
+                #tweet_in_response_to_user_id = status.in_reply_to_user_id
+                
+                tweet_user_created_at = status.user.created_at
+                tweet_user_like_count = status.user.favourites_count 
+                tweet_user_following_count = status.user.friends_count #this may be status.user.following
+                tweet_user_profile_url = status.user.url
+                
+               
+                tweet_user_tweet_count = status.user.statuses_count
+                
+                user_influence_score = influence_score(tweet_user_verified, tweet_user_tweet_count, tweet_user_followers_count, tweet_user_listed_count, tweet_user_like_count)
+ 
+                print(user_influence_score)
                 print('\n')
 
                 
@@ -255,9 +166,9 @@ class IDPrinter(tweepy.Stream):
                 if row_count == 0:
                     #print("It Does Not Exist")    
                     count = crsr.execute("""
-                    INSERT INTO TWEET_ALL_UP (tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound, tweet_user_verified, tweet_user_followers_count, tweet_user_listed_count) 
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                    tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound, tweet_user_verified, tweet_user_followers_count, tweet_user_listed_count).rowcount
+                    INSERT INTO TWEET_ALL_UP (tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound, tweet_user_verified, tweet_user_followers_count, tweet_user_listed_count, tweet_user_location, tweet_user_id, tweet_user_created_at, tweet_user_like_count, tweet_user_following_count, tweet_user_profile_url, tweet_user_tweet_count, tweet_in_response_to_user_id, user_influence_score) 
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                    tweet_id, tweet_text, tweet_source, tweet_source_url, tweet_in_reply_to_status_id, tweet_in_reply_to_screen_name, tweet_username, tweet_geo, tweet_coordinates, tweet_is_quote_status, tweet_retweet_count, tweet_like_count, tweet_favorited, tweet_retweeted, tweet_lang, tweet_created_at, query, project, tweet_mentions, tweet_hashtags, tweet_urls, tweet_user_description, jobtype, tweet_clean_text, tweet_sentiment_compound, tweet_user_verified, tweet_user_followers_count, tweet_user_listed_count, tweet_user_location, tweet_user_id, tweet_user_created_at, tweet_user_like_count, tweet_user_following_count, tweet_user_profile_url, tweet_user_tweet_count, tweet_in_response_to_user_id, user_influence_score).rowcount
 
                     #removing tweet_entities, tweet_user (can pull individual attributes), tweet_in_response_to_user_id (dict can't be inserted into SQL), tweet_place
 
@@ -376,10 +287,32 @@ def tweet_sentiment_analyzer(clean_text):
   sentiment_scores = analyzer.polarity_scores(clean_text)
   return(sentiment_scores)
 
+def influence_score(tweet_user_verified, tweet_user_tweet_count, tweet_user_followers_count, tweet_user_listed_count, tweet_user_like_count):
+    score = 0
+    if tweet_user_verified:
+        score = score + 4000
+    if tweet_user_tweet_count > 0:
+        score = score + (tweet_user_tweet_count * .05)
+    if tweet_user_followers_count > 0:
+        score = score + (tweet_user_followers_count * .2)
+    if tweet_user_listed_count > 0:
+        score = score + (tweet_user_listed_count * 200)
+    if tweet_user_like_count > 0:
+        temp_user_like_score = (tweet_user_like_count * .05)
+        if temp_user_like_score > 10000:
+            score = score + 10000
+        else:
+            score = score + temp_user_like_score
+    temp_score = (score / 10000) 
+    influence = round(temp_score, 2)       
+    return(influence)
+
 ent_dict = []
 analyzer = SentimentIntensityAnalyzer()
 
 ################################################################################################################################
 #printer.filter(track=['covid'],languages=["en"])
-printer.filter(track=['education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks'],languages=["en"])
+#printer.filter(track=['education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks', 'SB657', 'HB1474', 'HB1995', 'missouri defund education'],languages=["en"])
+printer.filter(track=['Arizona Cardinals', 'Los Angeles Rams', 'LA Rams', 'Cardinals football'],languages=["en"])
 ################################################################################################################################
+
