@@ -109,7 +109,7 @@ class IDPrinter(tweepy.Stream):
                 else:
                     tweet_urls = None     
                 
-
+                #check all fields are inserted
                 tweet_source = status.source
                 tweet_source_url = status.source_url
                 tweet_in_reply_to_status_id = status.in_reply_to_status_id
@@ -313,6 +313,6 @@ analyzer = SentimentIntensityAnalyzer()
 ################################################################################################################################
 #printer.filter(track=['covid'],languages=["en"])
 #printer.filter(track=['education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks', 'SB657', 'HB1474', 'HB1995', 'missouri defund education'],languages=["en"])
-printer.filter(track=['Arizona Cardinals', 'Los Angeles Rams', 'LA Rams', 'Cardinals football'],languages=["en"])
+printer.filter(track=['Arizona Cardinals', 'Los Angeles Rams', 'LA Rams', 'Cardinals football', "football"],languages=["en"])
 ################################################################################################################################
 
