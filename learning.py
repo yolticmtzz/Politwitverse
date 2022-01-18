@@ -178,7 +178,10 @@ def makeitastring(wannabestring):
 
 #query = 'missouri education -is:retweet'
 
-query = "Missouri education -is:retweet"
+query = "Fox School District -is:retweet"
+
+project = "Fox School"
+jobtype = "batch"
 
 #query = "moleg -is:retweet"
 #####################################################################################################################################
@@ -391,9 +394,9 @@ for tweet in response.data:
     if row_count == 0:
         #print("It Does Not Exist")    
         count = crsr.execute("""
-        INSERT INTO TWEET_ALL_UP (tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_sentiment_compound, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_context_annotations, tweet_domain_ids, tweet_entity_ids) 
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-        tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_sentiment_compound, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_context_annotations, tweet_domain_ids, tweet_entity_ids).rowcount
+        INSERT INTO TWEET_ALL_UP (tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_sentiment_compound, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_context_annotations, tweet_domain_ids, tweet_entity_ids, query, jobtype, project) 
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+        tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_sentiment_compound, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_context_annotations, tweet_domain_ids, tweet_entity_ids, query, jobtype, project).rowcount
 
 
 

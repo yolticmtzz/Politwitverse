@@ -74,7 +74,8 @@ class IDPrinter(tweepy.Stream):
                 #tweet_text = status.text #handling above
                 
                 ent_dict = status.entities
-                #place_dict = status.place
+                print('GEOBEOGEOGEOGEOGEOGEOGEOGEOGEOGEOGEOGEOGEOGEO')
+                print(status.geo)
 
                 if 'user_mentions' in ent_dict:
                     t_mentions = ent_dict.get('user_mentions')
@@ -311,8 +312,8 @@ ent_dict = []
 analyzer = SentimentIntensityAnalyzer()
 
 ################################################################################################################################
-#printer.filter(track=['covid'],languages=["en"])
+printer.filter(track=['to:POTUS'],languages=["en"])
 #printer.filter(track=['education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks', 'SB657', 'HB1474', 'HB1995', 'missouri defund education'],languages=["en"])
-printer.filter(track=['Arizona Cardinals', 'Los Angeles Rams', 'LA Rams', 'Cardinals football', "football"],languages=["en"])
+#printer.filter(track=['Arizona Cardinals', 'Los Angeles Rams', 'LA Rams', 'Cardinals football', "football"],languages=["en"])
 ################################################################################################################################
 
