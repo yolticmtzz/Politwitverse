@@ -14,7 +14,7 @@ access token
 access token secret
 mlblwNEQ21A6IrmC4boX42Rctpq0WLNMfTsoOSmOwPrAa
 
-oath2 client secretu-kbhI568QREAMDAdXezv9Ay7kgiUE8io0n1suu1UF0EXk-eqc
+oath2 client secret u-kbhI568QREAMDAdXezv9Ay7kgiUE8io0n1suu1UF0EXk-eqc
 
 client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAKAMZyNc9%2FF0wV%2Bzp9y2jcPwYG9U%3Dvvv4YqNOg5ZBuzznjuIwttR5UL6ESPN96ceQQaEeJ1Kng0PeDQ', 
                        consumer_key='anvCaAUUuYqG3xLR7dNAzR0dr', 
