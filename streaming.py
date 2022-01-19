@@ -9,7 +9,9 @@ import preprocessor as p
 from nltk.tokenize import sent_tokenize
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import nltk
-nltk.download('vader_lexicon')
+
+nltk.download('tweets_anonDataRatings.txt')
+#nltk.download('vader_lexicon')
 
 API_KEY = "anvCaAUUuYqG3xLR7dNAzR0dr"
 API_SECRET_KEY = "ULtEkEdycJzC08cyebSg1ExdOVgCg5pUG0qtLPnLta24ClNDqr"
@@ -54,8 +56,8 @@ class IDPrinter(tweepy.Stream):
         # project = 'realtime education analysis'
         # jobtype = "stream"
         
-        query = 'Arizona Cardinals LA and Las Angeles Cardinals Football'
-        project = 'playoff game prediction'
+        query = 'moleg hb and sb:en'
+        project = 'missouri moleg leg'
         jobtype = "stream"
         
         # query = 'missouri covid lang:en'
@@ -74,7 +76,6 @@ class IDPrinter(tweepy.Stream):
                 #tweet_text = status.text #handling above
                 
                 ent_dict = status.entities
-                print('GEOBEOGEOGEOGEOGEOGEOGEOGEOGEOGEOGEOGEOGEOGEO')
                 print(status.geo)
 
                 if 'user_mentions' in ent_dict:
@@ -133,6 +134,7 @@ class IDPrinter(tweepy.Stream):
                 tweet_user_verified = status.user.verified
                 tweet_user_followers_count = status.user.followers_count
                 tweet_user_listed_count = status.user.listed_count
+                place_field = place.id
                 
                 tweet_user_location = status.user.location
                 tweet_user_id = status.user.id
@@ -151,7 +153,7 @@ class IDPrinter(tweepy.Stream):
                 tweet_user_tweet_count = status.user.statuses_count
                 
                 user_influence_score = influence_score(tweet_user_verified, tweet_user_tweet_count, tweet_user_followers_count, tweet_user_listed_count, tweet_user_like_count)
- 
+                print(tweet_username)
                 print(user_influence_score)
                 print('\n')
 
@@ -312,7 +314,7 @@ ent_dict = []
 analyzer = SentimentIntensityAnalyzer()
 
 ################################################################################################################################
-printer.filter(track=['to:POTUS'],languages=["en"])
+printer.filter(track=['moleg', 'Missouri state legislature', 'Missouri House','HB 2117', 'Missouri voters'],languages=["en"])
 #printer.filter(track=['education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks', 'SB657', 'HB1474', 'HB1995', 'missouri defund education'],languages=["en"])
 #printer.filter(track=['Arizona Cardinals', 'Los Angeles Rams', 'LA Rams', 'Cardinals football', "football"],languages=["en"])
 ################################################################################################################################
