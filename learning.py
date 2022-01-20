@@ -6,15 +6,30 @@ import re
 import pickle
 import ast
 import preprocessor as p
-import nltk
 import pandas as pd
-from nltk.tokenize import sent_tokenize
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import re
 from re import search
 import textwrap
 import pyodbc
-#nltk.download('vader_lexicon')
+import nltk
+from pysentimiento import create_analyzer
+from nltk.tokenize import sent_tokenize
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.corpus import stopwords
+from nltk.tokenize import TweetTokenizer
+
+# from pysentimiento.preprocessing import preprocess_tweet # using github preprocess instead
+import spacy
+
+b_analyzer_sentiment = create_analyzer(task="sentiment", lang="en")
+b_analyzer_emotion = create_analyzer(task="emotion", lang="en")
+b_analyzer_hate_speech = create_analyzer(task="hate_speech", lang="en")
+v_analyzer_sentiment = SentimentIntensityAnalyzer()
+client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
+p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.HASHTAG)
+TweetTokenizer()
+stop_words = set(stopwords.words('english'))
+nlp = spacy.load('en_core_web_sm')
 
 def has_value(cursor, table, column, value):
     query = 'SELECT 1 from {} WHERE {} = ? LIMIT 1'.format(table, column)
@@ -39,6 +54,7 @@ def clean_tweets(tweet_text):
   clean_tweet_text = p.clean(tweet_text)
   #clean_tweet_text = p.parse(clean_text)
   clean_tweet_text = remove_whitespace(clean_tweet_text)
+  clean_tweet_text = clean_tweet_text.replace('&amp', "")
   return(clean_tweet_text)
 
 #creates a dictionary of positive score, neutral score, negativie score or compound score. Here it is 
@@ -173,14 +189,39 @@ def makeitastring(wannabestring):
   convertedstring = ','.join(map(str, wannabestring))
   return(convertedstring)
 
+def tweet_sentiment_analyzer(text):
+    
+    temp = b_analyzer_sentiment.predict(text)
+    bert_sentiment_label = temp.output # output = neg, pos, neu label
+    bert_sentiment_score = temp.probas # probas = percentage score
+    NEG = round(bert_sentiment_score.get('POS'), 2)
+    POS = round(bert_sentiment_score.get('NEG'), 2)
+    NEU = round(bert_sentiment_score.get('NEU'), 2)
+    score_probability = max(NEG, POS, NEU)
+    bert_sentiment_list = [bert_sentiment_label, score_probability]
+    
+    return(bert_sentiment_list)
+
+def tweet_tokenization(clean_tweet_text):
+    
+    token = TweetTokenizer()
+    temp_tokens = token.tokenize(clean_tweet_text)  
+    nltk_tokens = []
+    for w in temp_tokens:
+         if w not in stop_words:
+             if len(w) > 2:
+                 nltk_tokens.append(w)
+                 
+    return(nltk_tokens)
+
 #####################################################################################################################################
 #query = '@LaurenArthurMO OR @Dougbeck562 OR @RickBrattin OR @justinbrownmo OR @EricBurlison OR @MikeCierpiot OR @SandyCrawford2 OR @BillEigel OR @SenatorEslinger OR @votegannon OR @DLHoskins OR @lincolnhough OR @Koenig4MO OR @TonyForMissouri OR @KarlaMayMO4 OR @SenAngelaMosley OR @bobondermo OR @gregrazer OR @hrehder OR @RobertsforSTL OR @calebrowden OR @JillSchupp OR @beedubyah1967 OR @BrianWilliamsMO -is:retweet'
 
 #query = 'missouri education -is:retweet'
 
-query = "Fox School District -is:retweet"
+query = "missouri covid -is:retweet"
 
-project = "Fox School"
+project = "missouri covid analysis"
 jobtype = "batch"
 
 #query = "moleg -is:retweet"
@@ -295,6 +336,8 @@ for tweet in response.data:
         tweet_entity_ids = ""
         
     tweet_context_annotations = makeitastring(tweet_context_annotations)
+    print('tweet context annotations ----------------------------------------------------------------------------')
+    print(tweet_context_annotations)
         
     #domain_ids = temp_tweet_context_annotations[1]
     #entity_ids = temp_tweet_context_annotations[2]
@@ -315,12 +358,13 @@ for tweet in response.data:
     ######These two functions while separate should be ran together; however instead of creating one function want the option to just get back clean text
     tweet_clean_text = clean_tweets(tweet.text) #
     
-    temp_tweet_sentiment_all = tweet_sentiment_analyzer(tweet_clean_text) #
+    temp_tweet_sentiment_all = tweet_sentiment_analyzer(tweet_text) #
+    
     
     #print(temp_tweet_sentiment_all)
         
-    temp_tweet_sentiment_compound = temp_tweet_sentiment_all.get('compound') # 
-    tweet_sentiment_compound = round(temp_tweet_sentiment_compound, 2) 
+    tweet_sentiment_label = temp_tweet_sentiment_all[0]
+    tweet_sentiment_score = temp_tweet_sentiment_all[1]
     
     tweet_sentiment_all = str(temp_tweet_sentiment_all)
      
@@ -339,7 +383,9 @@ for tweet in response.data:
     tweet_user_verified = user.verified
     tweet_user_listed_count = user.public_metrics['listed_count']
     tweet_user_following_count = user.public_metrics['following_count']
-    tweet_user_followers_count = user.public_metrics['followers_count']   
+    tweet_user_followers_count = user.public_metrics['followers_count']
+ 
+    print(tweet)
 
     #print(tweet.entities['mentions']) possibly another way to check for entitiy data if it comes back with empty error
 
@@ -376,40 +422,29 @@ for tweet in response.data:
             tweet_urls = makeitastring(tweet_urls)
     else:
             tweet_urls = None     
-
-    # new_row = {"tweet_id":tweet_id, "tweet_created_at":tweet_created_at, "tweet_text":tweet_text, "tweet_lang":tweet_lang, "tweet_source":tweet_source, "tweet_reply_settings":tweet_reply_settings, "tweet_conversation_id":tweet_conversation_id,"tweet_in_response_to_user_id":tweet_in_response_to_user_id,"tweet_username":tweet_username, "tweet_user_tweet_count":tweet_user_tweet_count, "tweet_user_description":tweet_user_description, "tweet_user_location":tweet_user_location, "tweet_user_created_at":tweet_user_created_at, "tweet_user_pinned_tweet":tweet_user_pinned_tweet, "tweet_user_profile_url":tweet_user_profile_url, "tweet_user_verified":tweet_user_verified, "tweet_user_listed_count":tweet_user_listed_count, "tweet_user_following_count":tweet_user_following_count, "tweet_user_followers_count":tweet_user_followers_count, "tweet_reply_count":tweet_reply_count, "tweet_like_count":tweet_like_count, "tweet_quote_count":tweet_quote_count,  "tweet_reference_type":tweet_reference_type, "tweet_reference_id":tweet_reference_id, "tweet_clean_text":tweet_clean_text, "tweet_sentiment_all":tweet_sentiment_all, "tweet_sentiment_compound":tweet_sentiment_compound, "tweet_hashtags":tweet_hashtags, "tweet_annotations":tweet_annotations, "tweet_urls":tweet_urls, "tweet_mentions":tweet_mentions,"tweet_user_id":tweet_user_id, "tweet_context_annotations":tweet_context_annotations,
-    # "tweet_domain_ids":tweet_domain_ids, "tweet_entity_ids":tweet_entity_ids}
-    
-    #print_tweet_data()    
-  
-    
+     
     #checking for tweet_id since it is primary key#########################################################################################################
-    crsr.execute(
-        "SELECT tweet_id, COUNT(*) FROM tweet_all_up WHERE tweet_id = ? GROUP BY tweet_id",
-        (tweet_id)
-    )
-    results = crsr.fetchall()
-    row_count = crsr.rowcount
-    # print("number of affected rows: {}".format(row_count))
-    if row_count == 0:
-        #print("It Does Not Exist")    
-        count = crsr.execute("""
-        INSERT INTO TWEET_ALL_UP (tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_sentiment_compound, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_context_annotations, tweet_domain_ids, tweet_entity_ids, query, jobtype, project) 
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-        tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_sentiment_compound, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_context_annotations, tweet_domain_ids, tweet_entity_ids, query, jobtype, project).rowcount
+#     crsr.execute(
+#         "SELECT tweet_id, COUNT(*) FROM tweet_all_up WHERE tweet_id = ? GROUP BY tweet_id",
+#         (tweet_id)
+#     )
+#     results = crsr.fetchall()
+#     row_count = crsr.rowcount
+
+#     if row_count == 0:
+#         #print("It Does Not Exist")    
+#         count = crsr.execute("""
+#         INSERT INTO TWEET_ALL_UP (tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_context_annotations, tweet_domain_ids, tweet_entity_ids, query, jobtype, project, tweet_sentiment_label, tweet_sentiment_score) 
+#         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+#         tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_domain_ids, tweet_context_annotations, tweet_entity_ids, query, jobtype, project, tweet_sentiment_label, tweet_sentiment_score).rowcount
 
 
 
-    #print('Rows inserted: ' + str(count))
+#     #print('Rows inserted: ' + str(count))
         
-    crsr.commit()
-
-
-
-    
-
+#     crsr.commit()
            
-#df.to_csv('reps5.csv', index=False)
+# #df.to_csv('reps5.csv', index=False)
 
-print('Thank you for using Politwit1984.')
-cnxn.close() # TODO #11 determine when connection to sql should be closed         
+# print('Thank you for using Politwit1984.')
+# cnxn.close() # TODO #11 determine when connection to sql should be closed         
