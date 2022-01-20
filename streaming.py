@@ -69,8 +69,8 @@ class IDPrinter(tweepy.Stream):
         # project = 'realtime education analysis'
         # jobtype = "stream"
         
-        query = 'covid lang:en -is:retweet'
-        project = 'covid'
+        query = 'molegmaskeducation'
+        project = 'molegmaskeducation'
         jobtype = "stream"
         
         # query = 'missouri covid lang:en'
@@ -338,8 +338,9 @@ ent_dict = []
 analyzer = SentimentIntensityAnalyzer()
 
 ################################################################################################################################
-printer.filter(track=['covid'],languages=["en"])
-#printer.filter(track=['education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks', 'SB657', 'HB1474', 'HB1995', 'missouri defund education'],languages=["en"])
+#printer.filter(track=['moleg', 'missouri covid', 'missouri education', 'missouri schools', 'missouri house', 'missouri senate', 'mogov'],languages=["en"])
+#printer.filter(track=['education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks', 'SB657', 'HB1474', 'HB1995', 'missouri defund'],languages=["en"])
 #printer.filter(track=['Arizona Cardinals', 'Los Angeles Rams', 'LA Rams', 'Cardinals football', "football"],languages=["en"])
+printer.filter(follow=['979769447656382464'], languages=["en"])
 ################################################################################################################################
 
