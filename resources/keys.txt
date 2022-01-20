@@ -25,3 +25,7 @@ client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAKAMZyNc9%2F
 newsapi key = f06dafe0f81643f3958d127eeba925ac
 
 azure event hub connection string = Endpoint=sb://ns-politwit.servicebus.windows.net/;SharedAccessKeyName=socialtwitter-access;SharedAccessKey=CSE3VUIonXbWO2mbsEifircHmznPhlPVbulKKJ5AA7A=;EntityPath=socialtwitter-eh
+
+ legiscan 958cb18bf8c2340312c545e36d189ed9
+ 
+ azure sql = twitpoli1984-sqlsrv.database.windows.net
