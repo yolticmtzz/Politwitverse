@@ -124,7 +124,8 @@ class IDPrinter(tweepy.Stream):
                 tweet_source_url = status.source_url
                 tweet_in_reply_to_status_id = status.in_reply_to_status_id
                 tweet_in_reply_to_screen_name = status.in_reply_to_screen_name
-                tweet_username = status.user.screen_name                
+                temp_tweet_username = status.user.screen_name  
+                tweet_username = str(temp_tweet_username)  # in some rare cases a username comes back as a dict type so converting to string         
                 #tweet_user = status.user
                 tweet_geo = status.geo
                 tweet_coordinates = status.coordinates
@@ -285,6 +286,7 @@ def clean_tweets(tweet_text):
 
 #creates a dictionary of positive score, neutral score, negativie score or compound score. Here it is 
 def tweet_sentiment_analyzer(clean_text):
+
   sentiment_scores = []
   sentiment_scores = analyzer.polarity_scores(clean_text)
   return(sentiment_scores)
@@ -323,7 +325,11 @@ def tweet_sentiment_analyzer(text):
     return(bert_sentiment_list)
 
 def tweet_tokenization(clean_tweet_text):
-    
+    """tokenizes a sentence
+
+    Args:
+        clean_tweet_text ([str]): [tweet that has been sent through a function that removes unnecessary whitespace, characters, etc.]
+    """
     token = TweetTokenizer()
     temp_tokens = token.tokenize(clean_tweet_text)  
     nltk_tokens = []
@@ -338,9 +344,9 @@ ent_dict = []
 analyzer = SentimentIntensityAnalyzer()
 
 ################################################################################################################################
-#printer.filter(track=['moleg', 'missouri covid', 'missouri education', 'missouri schools', 'missouri house', 'missouri senate', 'mogov'],languages=["en"])
+printer.filter(track=['moleg', 'missouri covid', 'missouri education', 'missouri schools', 'missouri house', 'missouri senate', 'mogov'],languages=["en"])
 #printer.filter(track=['education moleg', 'missouri education', 'missouri mandate', 'missouri schools', 'missouri teachers', 'missouri students', 'missouri dese', 'missouri public schools', 'missouri charter schools', 'missouri private schools', 'missouri school boards', 'misssouri school covid', 'missouri school masks', 'SB657', 'HB1474', 'HB1995', 'missouri defund'],languages=["en"])
 #printer.filter(track=['Arizona Cardinals', 'Los Angeles Rams', 'LA Rams', 'Cardinals football', "football"],languages=["en"])
-printer.filter(follow=['979769447656382464'], languages=["en"])
+#printer.filter(follow=['979769447656382464'], languages=["en"])
 ################################################################################################################################
 

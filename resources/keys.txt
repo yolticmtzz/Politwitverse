@@ -29,3 +29,13 @@ azure event hub connection string = Endpoint=sb://ns-politwit.servicebus.windows
  legiscan 958cb18bf8c2340312c545e36d189ed9
  
  azure sql = twitpoli1984-sqlsrv.database.windows.net
+
+ text = {'domain': {'id': '10', 'name': 'Person', 'description': 'Named people in the world like Nelson Mandela'}, 'entity': {'id': '888190307216506881', 'name': 'Joe Manchin', 'description': 'US Senator Joe Manchin (WV)'}}, {'domain': {'id': '35', 'name': 'Politician', 'description': 'Politicians in the world, like Joe Biden'}, 'entity': {'id': '888190307216506881', 'name': 'Joe Manchin', 'description': 'US Senator Joe Manchin (WV)'}}, {'domain': {'id': '88', 'name': 'Political Body', 'description': 'A section of a government, like The Supreme Court'}, 'entity': {'id': '867872043672326144', 'name': 'Supreme Court of the United States', 'description': 'Conversation about the Supreme Court and justices'}}
+
+
+
+ # import json
+
+
+
+curl --request GET 'https://api.twitter.com/2/tweets/search/recent?query=from:twitterdev' --header 'Authorization: Bearer AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAKAMZyNc9%2FF0wV%2Bzp9y2jcPwYG9U%3Dvvv4YqNOg5ZBuzznjuIwttR5UL6ESPN96ceQQaEeJ1Kng0PeDQ'

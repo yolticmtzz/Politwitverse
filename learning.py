@@ -1,10 +1,5 @@
 import tweepy
 from collections import defaultdict
-import time
-import json
-import re
-import pickle
-import ast
 import preprocessor as p
 import pandas as pd
 import re
@@ -17,13 +12,14 @@ from nltk.tokenize import sent_tokenize
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
+import twit
 
 # from pysentimiento.preprocessing import preprocess_tweet # using github preprocess instead
 import spacy
 
 b_analyzer_sentiment = create_analyzer(task="sentiment", lang="en")
 b_analyzer_emotion = create_analyzer(task="emotion", lang="en")
-b_analyzer_hate_speech = create_analyzer(task="hate_speech", lang="en")
+b_analyzer_hate = create_analyzer(task="hate_speech", lang="en")
 v_analyzer_sentiment = SentimentIntensityAnalyzer()
 client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
 p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.HASHTAG)
@@ -41,10 +37,14 @@ def remove_ASCII(text_soup):
      return(string_decode)
 
 def print_tweet_data():
-    print(tweet_id)
-    #print(tweet_text)
-    #print(tweet_sentiment_compound)
-    #print('\n')
+    print('--------------------------------------------------------------------------------------------')
+    print(tweet_username)
+    print(tweet_clean_text)
+    print(tweet_sentiment_label)
+    print(tweet_emotion_label)
+    print(tweet_hate_label)
+    print('--------------------------------------------------------------------------------------------')
+    print('\n')
     
 def remove_whitespace(text):
     return  " ".join(text.split())
@@ -52,7 +52,6 @@ def remove_whitespace(text):
 def clean_tweets(tweet_text):
   p.set_options(p.OPT.URL, p.OPT.MENTION)
   clean_tweet_text = p.clean(tweet_text)
-  #clean_tweet_text = p.parse(clean_text)
   clean_tweet_text = remove_whitespace(clean_tweet_text)
   clean_tweet_text = clean_tweet_text.replace('&amp', "")
   return(clean_tweet_text)
@@ -62,62 +61,6 @@ def tweet_sentiment_analyzer(clean_text):
   sentiment_scores = []
   sentiment_scores = analyzer.polarity_scores(clean_text)
   return(sentiment_scores)
-
-def hydrate_context(jj): #accepts tweet.annotations and returns a list of annotations, domain ids and entitity ids
-    c = makeitastring(jj)
-    print('\n')
-    context15 = c.replace('"', '')
-    context16 = context15.replace('"',"")
-    context17 = context16.replace("{", "")
-    context18 = context17.replace("}", "")
-    context19 = context18.replace("(", "")
-    context20 = context19.replace("'", "")
-    context21 = context20.replace(")", "")
-    context22 = context21.replace(":", ',')
-    context2 = context20.split(",")
-    context_list = []
-    domain_list = []
-    entity_list = []
-    final_list = []
-    i=0
-    while i < len(context2):
-        temp_context = context2[i]
-        if search("Entit", temp_context):
-            temp_context = ""
-        if search("Entit", temp_context):
-            temp_context = ""
-        if search("Nelson", temp_context):
-            temp_context = ""
-        if search(("name: "), temp_context):
-            temp_context2 = temp_context.replace("name: ", "")
-            context_list.append(temp_context2.strip())
-        if search("description: ", temp_context):
-            temp_context2 = temp_context.replace("description: ", "")
-            context_list.append(temp_context2.strip())
-        if search("like ", temp_context):
-            temp_context2 = temp_context.replace("like ", "")
-            context_list.append(temp_context2.strip())
-        if search("domain: id", temp_context):
-            temp_context2 = temp_context.replace("domain: id:", "") #see if by changing variables from context2 to something different in each
-            #print(temp_context2 + '- domain')
-            domain_list.append(temp_context2.strip())
-        if search("entity: id", temp_context):
-            temp_context2 = temp_context.replace("entity: id:", "")
-            entity_list.append(temp_context2.strip())
-        i=i+1
-    
-    context_list = list(set(context_list))  
-   # print(context_list)
-    domain_list = list(set(domain_list)) 
-    domain_list = makeitastring(domain_list)
-   # print(domain_list)
-    entity_list = list(set(entity_list)) 
-   # print(entity_list)
-    final_list.append(context_list)
-    final_list.append(domain_list)
-    final_list.append(entity_list)
-   
-    return(final_list)
 
 #using string manipulation to get tweets - tested on all scenarios but could need to be changed if referenced_tweets payload changes
 def referenced_hydrate(referenced_tweets):
@@ -214,24 +157,65 @@ def tweet_tokenization(clean_tweet_text):
                  
     return(nltk_tokens)
 
+def tweet_emotion_analyzer(text):
+    
+ temp = b_analyzer_emotion.predict(text)
+ label = temp.output
+ 
+ return (label)
+
+def tweet_hate_analyzer(text):
+    
+     temp = b_analyzer_hate.predict(text)
+     temp_label = temp.output
+     if len(temp_label) > 2:
+          a = temp_label[0]
+          b = temp_label[1]
+          c = temp_label[2]
+          h = (a + " " + b + " " + c)
+     elif len(temp_label) == 2:
+          a = temp_label[0]
+          b = temp_label[1]
+          h = (a + " " + b)
+          
+     elif len(temp_label) == 1:
+          h = temp_label[0]
+     else:
+          h = "None"
+     
+     return (h)
+ 
+def hydrate_context_annotations(text):
+    elist = []
+    text = str(text)
+    text = text.replace("{", "").replace("}", "")
+    text = text.replace(":", ",")
+    text = text.replace('"', "").replace("'", "")
+    text = text.replace(", ", ",")
+    text = text.split(",")
+    i = 1
+    x = 0
+    while i <= len(text):
+        if text[x] == 'name':
+            elist.append(text[x+1])         
+        x = x + 1
+        i = i + 1
+    temp_str = str(elist)
+    temp_str = temp_str.replace("[", "").replace("]", "")
+    clist = temp_str.replace("'", "")
+    return(clist)
+
 #####################################################################################################################################
 #query = '@LaurenArthurMO OR @Dougbeck562 OR @RickBrattin OR @justinbrownmo OR @EricBurlison OR @MikeCierpiot OR @SandyCrawford2 OR @BillEigel OR @SenatorEslinger OR @votegannon OR @DLHoskins OR @lincolnhough OR @Koenig4MO OR @TonyForMissouri OR @KarlaMayMO4 OR @SenAngelaMosley OR @bobondermo OR @gregrazer OR @hrehder OR @RobertsforSTL OR @calebrowden OR @JillSchupp OR @beedubyah1967 OR @BrianWilliamsMO -is:retweet'
-
 #query = 'missouri education -is:retweet'
-
-query = "missouri covid -is:retweet"
-
-project = "missouri covid analysis"
+query = "walmart -is:retweet"
+project = "walmart analysis"
 jobtype = "batch"
-
 #query = "moleg -is:retweet"
 #####################################################################################################################################
 
 client = tweepy.Client(
 bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
-
- 
-#response = client.search_recent_tweets(query=query,tweet_fields=['attachments','author_id','context_annotations','conversation_id','created_at','entities','geo,id','in_reply_to_user_id','lang','possibly_sensitive','public_metrics','referenced_tweets','reply_settings','source','text','withheld'],user_fields=['created_at','description','entities,id','location,name','pinned_tweet_id','profile_image_url','protected,public_metrics','url','username','verified','withheld'],expansions=['attachments.poll_ids','attachments.media_keys','author_id','geo.place_id','in_reply_to_user_id','referenced_tweets.id','entities.mentions.username','referenced_tweets.id.author_id'],media_fields=['duration_ms','height','media_key', 'preview_image_url','promoted_metrics','public_metrics','type,url'],place_fields=['contained_within,country','country_code','full_name','geo,id','name','place_type'],poll_fields=['duration_minutes','end_datetime','id','options','voting_status'],max_results=100)
 
 ent_dict =  [] #dictionary for entities in response.data
 tweet_dict = [] #dictionary for tweets in response.data
@@ -243,8 +227,7 @@ t_urls = []
 t_annotations = []
 t_hashtags = []
 user_dict= {}
-analyzer = SentimentIntensityAnalyzer() # TODO #14 convert all lists into strings before inserting into SQL
-
+analyzer = SentimentIntensityAnalyzer() 
 
 driver = '{ODBC Driver 17 for SQL Server}'
 server_name = 'twitpoli1984-sqlsrv'
@@ -273,24 +256,18 @@ connection_string = textwrap.dedent('''
 cnxn: pyodbc.Connection = pyodbc.connect(connection_string)
 crsr: pyodbc.Cursor = cnxn.cursor()
 
-# tweet_column_names = ["tweet_id", "tweet_created_at", "tweet_text", "tweet_lang", "tweet_source", "tweet_reply_settings", "tweet_conversation_id", "tweet_in_response_to_user_id", "tweet_username", "tweet_user_tweet_count", "tweet_user_description", "tweet_user_location", "tweet_user_created_at", "tweet_user_pinned_tweet", "tweet_user_profile_url", "tweet_user_verified", "tweet_user_listed_count", "tweet_user_following_count", "tweet_user_followers_count", "tweet_reply_count", "tweet_like_count", "tweet_quote_count", "tweet_reply_count", "tweet_reference_type", "tweet_reference_id", "tweet_clean_text", "tweet_sentiment_all", "tweet_sentiment_compound", "tweet_hashtags", "tweet_annotations", "tweet_urls", "tweet_mentions", "tweet_user_id", "tweet_context_annotations", "tweet_domain_ids", "tweet_entity_ids"]
-
-
 response = client.search_recent_tweets(query=query,tweet_fields=['attachments','author_id','context_annotations','conversation_id','created_at','entities','geo,id','in_reply_to_user_id','lang','possibly_sensitive','public_metrics','referenced_tweets','reply_settings','source','text','withheld'],user_fields=['created_at','description','entities,id','location','name','pinned_tweet_id','profile_image_url','protected,public_metrics','url','username','verified','withheld'],expansions=['attachments.poll_ids','attachments.media_keys','author_id','geo.place_id','in_reply_to_user_id','referenced_tweets.id','entities.mentions.username','referenced_tweets.id.author_id'],media_fields=['duration_ms','height','media_key', 'preview_image_url','promoted_metrics','public_metrics','type,url'],place_fields=['contained_within,country','country_code','full_name','geo,id','name','place_type'],poll_fields=['duration_minutes','end_datetime','id','options','voting_status'],max_results=100)
 
-   
 users = {u['id']: u for u in response.includes['users']}         
 for tweet in response.data:  
-    tweet_dict = tweet.data
-    ent_dict = tweet.entities
-    #print(tweet.author_id)
+    #tweet_dict = tweet.data
+    #ent_dict = tweet.entities
     if users[tweet.author_id]:
         user = users[tweet.author_id]
-        ent_dict = []
+        #ent_dict = []
         tweet_dict = tweet.data
-        ent_dict = tweet.entities
-
-    if 'public_metrics' in tweet_dict:
+        
+    if 'public_metrics' in tweet_dict: # TODO #19 public metrics into a function
                 public_metrics_dict = (tweet_dict['public_metrics'])
                 tweet_retweet_count = public_metrics_dict.get('retweet_count') #
                 tweet_like_count = public_metrics_dict.get('like_count') #
@@ -302,8 +279,8 @@ for tweet in response.data:
         tweet_quote_count = None
         tweet_reply_count = None    
                                 
-    #assign referenced_tweets
-    tweet_reference_soup = tweet.referenced_tweets
+    #assign referenced_tweets 
+    tweet_reference_soup = tweet.referenced_tweets # TODO #17 referenced tweets into a function
     if tweet_reference_soup is not None:
             tweet_reference = referenced_hydrate(tweet_reference_soup)
             tweet_reference_type = tweet_reference[0] #
@@ -311,40 +288,9 @@ for tweet in response.data:
     else:
             tweet_reference_type = None
             tweet_reference_id = None
-            
-    #print(tweet.context_annotations)
-
-    #assign context_annotations
-
-    tweet_context_annotations = tweet.context_annotations
-    temp_tweet_context_annotations= hydrate_context(tweet.context_annotations) #returns list of contexts, domain ids, and entity ids
     
-    if len(temp_tweet_context_annotations[0]) > 0:
-        tweet_annotations = temp_tweet_context_annotations[0]
-    else:
-        tweet_annotations = ""
-        
-    if len(temp_tweet_context_annotations[1]) > 0:
-        tweet_domain_ids = temp_tweet_context_annotations[1]
-    else:
-        tweet_domain_ids = ""
-    
-    if len(temp_tweet_context_annotations[2]) > 0:
-        tweet_entity_ids = temp_tweet_context_annotations[2]
-        tweet_entity_ids = makeitastring(tweet_entity_ids)
-    else:
-        tweet_entity_ids = ""
-        
-    tweet_context_annotations = makeitastring(tweet_context_annotations)
-    print('tweet context annotations ----------------------------------------------------------------------------')
-    print(tweet_context_annotations)
-        
-    #domain_ids = temp_tweet_context_annotations[1]
-    #entity_ids = temp_tweet_context_annotations[2]
-    
-    #print(temp_tweet_context_annotations)
-
     #assign tweet_fields 
+    tweet_context_annotations = hydrate_context_annotations(tweet.context_annotations)
     tweet_created_at = tweet.created_at #
     tweet_lang = tweet.lang #
     tweet_reply_settings = tweet.reply_settings #
@@ -356,24 +302,18 @@ for tweet in response.data:
     tweet_in_response_to_user_id = tweet.in_reply_to_user_id #
         
     ######These two functions while separate should be ran together; however instead of creating one function want the option to just get back clean text
-    tweet_clean_text = clean_tweets(tweet.text) #
-    
+    tweet_clean_text = clean_tweets(tweet.text) 
     temp_tweet_sentiment_all = tweet_sentiment_analyzer(tweet_text) #
-    
-    
-    #print(temp_tweet_sentiment_all)
-        
+    tweet_emotion_label = tweet_emotion_analyzer(tweet_clean_text)
+    tweet_hate_label = tweet_hate_analyzer(tweet_clean_text) 
     tweet_sentiment_label = temp_tweet_sentiment_all[0]
     tweet_sentiment_score = temp_tweet_sentiment_all[1]
-    
-    tweet_sentiment_all = str(temp_tweet_sentiment_all)
-     
-    #tweet_sentiment_all = makeitastring(tweet_sentiment_all)
-    print(tweet_sentiment_all)                           
+    tweet_sentiment_all = str(temp_tweet_sentiment_all)                  
 
     #assign user fields to tweet 
     tweet_user_id = user.id            
-    tweet_username = user.username
+    temp_tweet_username = user.username
+    tweet_username = str(temp_tweet_username) # in some rare cases username was coming back as dict type, converting to string
     tweet_user_tweet_count = user.public_metrics['tweet_count']
     tweet_user_description = user.description
     tweet_user_location = user.location
@@ -384,21 +324,18 @@ for tweet in response.data:
     tweet_user_listed_count = user.public_metrics['listed_count']
     tweet_user_following_count = user.public_metrics['following_count']
     tweet_user_followers_count = user.public_metrics['followers_count']
- 
-    print(tweet)
 
-    #print(tweet.entities['mentions']) possibly another way to check for entitiy data if it comes back with empty error
-
-    #print(ent_dict)
+    # TODO #16 Turn this into a function
+    # TODO #20 Check to make sure entities is not none
+    ent_dict = tweet.entities
+    print(ent_dict)
     if 'mentions' in ent_dict:
             t_mentions = ent_dict.get('mentions')
             tweet_mentions = mention_hydrate(t_mentions) #
             tweet_mentions = makeitastring(tweet_mentions)
-          
-            
+                    
     else:
-            tweet_mentions = None
-                
+            tweet_mentions = None             
                 
     if 'hashtags' in ent_dict is not None: #is not None needed????
             t_hashtags = ent_dict.get('hashtags')  
@@ -421,30 +358,26 @@ for tweet in response.data:
             tweet_urls = url_hydrate(t_urls) #
             tweet_urls = makeitastring(tweet_urls)
     else:
-            tweet_urls = None     
+            tweet_urls = None  
+                     
+    print_tweet_data() 
      
-    #checking for tweet_id since it is primary key#########################################################################################################
-#     crsr.execute(
-#         "SELECT tweet_id, COUNT(*) FROM tweet_all_up WHERE tweet_id = ? GROUP BY tweet_id",
-#         (tweet_id)
-#     )
-#     results = crsr.fetchall()
-#     row_count = crsr.rowcount
+    #checking for tweet_id since it is primary key
+    crsr.execute(
+        "SELECT tweet_id, COUNT(*) FROM tweet_all_up WHERE tweet_id = ? GROUP BY tweet_id",
+        (tweet_id)
+    )
+    results = crsr.fetchall()
+    row_count = crsr.rowcount
 
-#     if row_count == 0:
-#         #print("It Does Not Exist")    
-#         count = crsr.execute("""
-#         INSERT INTO TWEET_ALL_UP (tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_context_annotations, tweet_domain_ids, tweet_entity_ids, query, jobtype, project, tweet_sentiment_label, tweet_sentiment_score) 
-#         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-#         tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_domain_ids, tweet_context_annotations, tweet_entity_ids, query, jobtype, project, tweet_sentiment_label, tweet_sentiment_score).rowcount
-
-
-
-#     #print('Rows inserted: ' + str(count))
+    if row_count == 0: # tweet_id (primary key) does not already exit
+        count = crsr.execute("""
+        INSERT INTO TWEET_ALL_UP (tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_context_annotations, query, jobtype, project, tweet_sentiment_label, tweet_sentiment_score, tweet_emotion_label, tweet_hate_label) 
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+        tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_username, tweet_user_tweet_count, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_user_id, tweet_context_annotations, query, jobtype, project, tweet_sentiment_label, tweet_sentiment_score, tweet_emotion_label, tweet_hate_label).rowcount
         
-#     crsr.commit()
+    crsr.commit()
            
-# #df.to_csv('reps5.csv', index=False)
-
-# print('Thank you for using Politwit1984.')
-# cnxn.close() # TODO #11 determine when connection to sql should be closed         
+print('Thank you for using Politwit1984.')
+cnxn.close() # TODO #11 determine when connection to sql should be closed   
+      
