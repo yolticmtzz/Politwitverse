@@ -206,8 +206,8 @@ def hydrate_context_annotations(text):
 #####################################################################################################################################
 #query = '@LaurenArthurMO OR @Dougbeck562 OR @RickBrattin OR @justinbrownmo OR @EricBurlison OR @MikeCierpiot OR @SandyCrawford2 OR @BillEigel OR @SenatorEslinger OR @votegannon OR @DLHoskins OR @lincolnhough OR @Koenig4MO OR @TonyForMissouri OR @KarlaMayMO4 OR @SenAngelaMosley OR @bobondermo OR @gregrazer OR @hrehder OR @RobertsforSTL OR @calebrowden OR @JillSchupp OR @beedubyah1967 OR @BrianWilliamsMO -is:retweet'
 #query = 'missouri education -is:retweet'
-query = "moleg -is:retweet"
-project = "mo leg"
+query = "from:nickbschroer -is:retweet"
+project = "fromnickbschroer"
 jobtype = "batch"
 #query = "moleg -is:retweet"
 #####################################################################################################################################
@@ -254,7 +254,7 @@ connection_string = textwrap.dedent('''
 cnxn: pyodbc.Connection = pyodbc.connect(connection_string)
 crsr: pyodbc.Cursor = cnxn.cursor()
 
-response = client.search_recent_tweets(query=query,tweet_fields=['attachments','author_id','context_annotations','conversation_id','created_at','entities','geo,id','in_reply_to_user_id','lang','possibly_sensitive','public_metrics','referenced_tweets','reply_settings','source','text','withheld'],user_fields=['created_at','description','entities,id','location','name','pinned_tweet_id','profile_image_url','protected,public_metrics','url','username','verified','withheld'],expansions=['attachments.poll_ids','attachments.media_keys','author_id','geo.place_id','in_reply_to_user_id','referenced_tweets.id','entities.mentions.username','referenced_tweets.id.author_id'],media_fields=['duration_ms','height','media_key', 'preview_image_url','promoted_metrics','public_metrics','type,url'],place_fields=['contained_within,country','country_code','full_name','geo,id','name','place_type'],poll_fields=['duration_minutes','end_datetime','id','options','voting_status'],max_results=10)
+response = client.search_recent_tweets(query=query,tweet_fields=['attachments','author_id','context_annotations','conversation_id','created_at','entities','geo,id','in_reply_to_user_id','lang','possibly_sensitive','public_metrics','referenced_tweets','reply_settings','source','text','withheld'],user_fields=['created_at','description','entities,id','location','name','pinned_tweet_id','profile_image_url','protected,public_metrics','url','username','verified','withheld'],expansions=['attachments.poll_ids','attachments.media_keys','author_id','geo.place_id','in_reply_to_user_id','referenced_tweets.id','entities.mentions.username','referenced_tweets.id.author_id'],media_fields=['duration_ms','height','media_key', 'preview_image_url','promoted_metrics','public_metrics','type,url'],place_fields=['contained_within,country','country_code','full_name','geo,id','name','place_type'],poll_fields=['duration_minutes','end_datetime','id','options','voting_status'],max_results=100)
 
 users = {u['id']: u for u in response.includes['users']}         
 for tweet in response.data:  
