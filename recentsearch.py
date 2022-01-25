@@ -13,15 +13,13 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
 import twit
-
-# from pysentimiento.preprocessing import preprocess_tweet # using github preprocess instead
 import spacy
 
 b_analyzer_sentiment = create_analyzer(task="sentiment", lang="en")
 b_analyzer_emotion = create_analyzer(task="emotion", lang="en")
 b_analyzer_hate = create_analyzer(task="hate_speech", lang="en")
 v_analyzer_sentiment = SentimentIntensityAnalyzer()
-client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
+client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAQ6Wu3fVaVsdg4PHyN7ktSku8u8g%3DMWmLEo5o3YPP0HsKRrX5S1UcKAnemvF2UVPG5Sp6S2qXRFNB9j')
 p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.HASHTAG)
 TweetTokenizer()
 stop_words = set(stopwords.words('english'))
@@ -208,14 +206,14 @@ def hydrate_context_annotations(text):
 #####################################################################################################################################
 #query = '@LaurenArthurMO OR @Dougbeck562 OR @RickBrattin OR @justinbrownmo OR @EricBurlison OR @MikeCierpiot OR @SandyCrawford2 OR @BillEigel OR @SenatorEslinger OR @votegannon OR @DLHoskins OR @lincolnhough OR @Koenig4MO OR @TonyForMissouri OR @KarlaMayMO4 OR @SenAngelaMosley OR @bobondermo OR @gregrazer OR @hrehder OR @RobertsforSTL OR @calebrowden OR @JillSchupp OR @beedubyah1967 OR @BrianWilliamsMO -is:retweet'
 #query = 'missouri education -is:retweet'
-query = "walmart -is:retweet"
-project = "walmart analysis"
+query = "moleg -is:retweet"
+project = "mo leg"
 jobtype = "batch"
 #query = "moleg -is:retweet"
 #####################################################################################################################################
 
-client = tweepy.Client(
-bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
+# client = tweepy.Client(
+# bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
 
 ent_dict =  [] #dictionary for entities in response.data
 tweet_dict = [] #dictionary for tweets in response.data
@@ -256,7 +254,7 @@ connection_string = textwrap.dedent('''
 cnxn: pyodbc.Connection = pyodbc.connect(connection_string)
 crsr: pyodbc.Cursor = cnxn.cursor()
 
-response = client.search_recent_tweets(query=query,tweet_fields=['attachments','author_id','context_annotations','conversation_id','created_at','entities','geo,id','in_reply_to_user_id','lang','possibly_sensitive','public_metrics','referenced_tweets','reply_settings','source','text','withheld'],user_fields=['created_at','description','entities,id','location','name','pinned_tweet_id','profile_image_url','protected,public_metrics','url','username','verified','withheld'],expansions=['attachments.poll_ids','attachments.media_keys','author_id','geo.place_id','in_reply_to_user_id','referenced_tweets.id','entities.mentions.username','referenced_tweets.id.author_id'],media_fields=['duration_ms','height','media_key', 'preview_image_url','promoted_metrics','public_metrics','type,url'],place_fields=['contained_within,country','country_code','full_name','geo,id','name','place_type'],poll_fields=['duration_minutes','end_datetime','id','options','voting_status'],max_results=100)
+response = client.search_recent_tweets(query=query,tweet_fields=['attachments','author_id','context_annotations','conversation_id','created_at','entities','geo,id','in_reply_to_user_id','lang','possibly_sensitive','public_metrics','referenced_tweets','reply_settings','source','text','withheld'],user_fields=['created_at','description','entities,id','location','name','pinned_tweet_id','profile_image_url','protected,public_metrics','url','username','verified','withheld'],expansions=['attachments.poll_ids','attachments.media_keys','author_id','geo.place_id','in_reply_to_user_id','referenced_tweets.id','entities.mentions.username','referenced_tweets.id.author_id'],media_fields=['duration_ms','height','media_key', 'preview_image_url','promoted_metrics','public_metrics','type,url'],place_fields=['contained_within,country','country_code','full_name','geo,id','name','place_type'],poll_fields=['duration_minutes','end_datetime','id','options','voting_status'],max_results=10)
 
 users = {u['id']: u for u in response.includes['users']}         
 for tweet in response.data:  
@@ -327,40 +325,41 @@ for tweet in response.data:
 
     # TODO #16 Turn this into a function
     # TODO #20 Check to make sure entities is not none
-    ent_dict = tweet.entities
-    print(ent_dict)
-    if 'mentions' in ent_dict:
-            t_mentions = ent_dict.get('mentions')
-            tweet_mentions = mention_hydrate(t_mentions) #
-            tweet_mentions = makeitastring(tweet_mentions)
+    if tweet.entities:
+        ent_dict = tweet.entities
+        print(ent_dict)
+        if 'mentions' in ent_dict:
+                t_mentions = ent_dict.get('mentions')
+                tweet_mentions = mention_hydrate(t_mentions) #
+                tweet_mentions = makeitastring(tweet_mentions)
+                        
+        else:
+                tweet_mentions = None             
                     
-    else:
-            tweet_mentions = None             
-                
-    if 'hashtags' in ent_dict is not None: #is not None needed????
-            t_hashtags = ent_dict.get('hashtags')  
-            tweet_hashtags = hashtag_hydrate(t_hashtags) #
-            tweet_hashtags = makeitastring(tweet_hashtags)
-                
-    else:
-            tweet_hashtags = None
+        if 'hashtags' in ent_dict is not None: #is not None needed????
+                t_hashtags = ent_dict.get('hashtags')  
+                tweet_hashtags = hashtag_hydrate(t_hashtags) #
+                tweet_hashtags = makeitastring(tweet_hashtags)
+                    
+        else:
+                tweet_hashtags = None
 
-    if 'annotations' in ent_dict:
-            t_annotations = ent_dict.get('annotations')   
-            tweet_annotations = annotations_hydrate(t_annotations) #
-            tweet_annotations = makeitastring(tweet_annotations)
+        if 'annotations' in ent_dict:
+                t_annotations = ent_dict.get('annotations')   
+                tweet_annotations = annotations_hydrate(t_annotations) #
+                tweet_annotations = makeitastring(tweet_annotations)
 
-    else:
-            tweet_annotations = None
+        else:
+                tweet_annotations = None
 
-    if 'urls' in ent_dict:
-            t_urls = ent_dict.get('urls')
-            tweet_urls = url_hydrate(t_urls) #
-            tweet_urls = makeitastring(tweet_urls)
-    else:
-            tweet_urls = None  
-                     
-    print_tweet_data() 
+        if 'urls' in ent_dict:
+                t_urls = ent_dict.get('urls')
+                tweet_urls = url_hydrate(t_urls) #
+                tweet_urls = makeitastring(tweet_urls)
+        else:
+                tweet_urls = None  
+                        
+        print_tweet_data() 
      
     #checking for tweet_id since it is primary key
     crsr.execute(

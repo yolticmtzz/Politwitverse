@@ -23,7 +23,7 @@ def hydrate_context_annotations(text):
 
 
 
-client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
+client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAQ6Wu3fVaVsdg4PHyN7ktSku8u8g%3DMWmLEo5o3YPP0HsKRrX5S1UcKAnemvF2UVPG5Sp6S2qXRFNB9j')
 
 query = "missouri covid -is:retweet lang:en"
 # response = client.search_recent_tweets(query=query, tweet_fields=['author_id'], user_fields=['created_at', 'name'],
@@ -34,20 +34,6 @@ response = client.search_recent_tweets(query=query,tweet_fields=['attachments','
 
 
 for tweet in response.data: 
-    tweet_text = tweet.text
-    if len(tweet.context_annotations) > 0:
-        tweet_ca = hydrate_entity(tweet.context_annotations)
-
-        print(tweet.text)
-        print('\n')
-        print(tweet_ca)
-        print('\n')
-        #tweet_context_annotations = list(set(tweet_entity))
-        
- 
-        
-       
-        print('----------------------------------------------------------------------------------------------')
-  
+    print(tweet.text)
 
 

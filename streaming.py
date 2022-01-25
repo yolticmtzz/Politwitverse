@@ -1,13 +1,8 @@
 from sqlalchemy import null
 import tweepy
-import pandas as pd
-import csv
 import textwrap
 import pyodbc
-import datetime
-
 import preprocessor as p
-
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
@@ -20,7 +15,7 @@ b_analyzer_sentiment = create_analyzer(task="sentiment", lang="en")
 b_analyzer_emotion = create_analyzer(task="emotion", lang="en")
 b_analyzer_hate_speech = create_analyzer(task="hate_speech", lang="en")
 v_analyzer_sentiment = SentimentIntensityAnalyzer()
-client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
+client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAQ6Wu3fVaVsdg4PHyN7ktSku8u8g%3DMWmLEo5o3YPP0HsKRrX5S1UcKAnemvF2UVPG5Sp6S2qXRFNB9j')
 
 TweetTokenizer()
 stop_words = set(stopwords.words('english'))
@@ -35,7 +30,6 @@ stream = tweepy.Stream(
   API_KEY, API_SECRET_KEY,
   ACCESS_TOKEN, ACCESS_TOKEN_SECRET
 )
-
 
 # TODO #10 must have better error detection and not fail on an exception
 class IDPrinter(tweepy.Stream):
