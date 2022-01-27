@@ -1,4 +1,4 @@
-import preprocessor as p
+import preprocessor as p # used for cleaning text
 
 def mention_hydrate(entity_list):  
     x = 0 #list index
@@ -81,18 +81,15 @@ def hydrate_public_metrics(tweet_dict):
       
 def hydrate_referenced_tweets(referenced_tweets):
   if referenced_tweets:
-      t = makeitastring(referenced_tweets)
-      t = t.split('=')
-      #t = referenced_tweets.split('=')
-      tweet_type = t[2].replace(']', ' ')
-      tweet_reference_id = t[1].replace(']', ' ').replace(' type', '')
-      referenced_tweets_list = []
-      referenced_tweets_list.append(tweet_type)
-      referenced_tweets_list.append(tweet_reference_id)
-      ref_type = referenced_tweets_list[0]
-      ref_id = referenced_tweets_list[1]
+      string = makeitastring(referenced_tweets)
+      string = string.replace("<ReferencedTweet ", "")
+      string = string.replace("id=", "").replace("type=", "")
+      string = string.replace("[", "").replace("]", "")
+      referenced_tweets_list = string.split(" ")
+      ref_type = referenced_tweets_list[1]
+      ref_id = referenced_tweets_list[0]
   else:
-      ref_type = None
+      ref_type = "original"
       ref_id = None
   return ref_type, ref_id
  

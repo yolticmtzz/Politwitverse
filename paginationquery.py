@@ -350,7 +350,7 @@ for tweet in tweepy.Paginator(client.search_recent_tweets, "missouri schools -is
         tweet_id, tweet_created_at, tweet_text, tweet_lang, tweet_source, tweet_reply_settings, tweet_conversation_id, tweet_in_response_to_user_id, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_clean_text, tweet_hashtags, tweet_annotations, tweet_urls, tweet_mentions, tweet_context_annotations, query, jobtype, project, tweet_sentiment_label, tweet_sentiment_score, tweet_emotion_label, tweet_hate_label).rowcount
         
         i = 1 + 1
-        FUprint(i)
+        print(i)
         
     crsr.commit()
                

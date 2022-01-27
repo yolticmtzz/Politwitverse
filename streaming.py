@@ -63,7 +63,7 @@ class IDPrinter(tweepy.Stream):
         # project = 'realtime education analysis'
         # jobtype = "stream"
         
-        query = 'molegmaskeducation'
+        query = 'moleg'
         project = 'molegmaskeducation'
         jobtype = "stream"
         
