@@ -11,32 +11,17 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from pysentimiento import create_analyzer
 import spacy
 import os
-
-consumer_key = os.getenv("CONSUMER_KEY")
-consumer_secret = os.getenv("CONSUMER_SECRET")
-access_token = os.getenv("CLIENT_ID")
-access_token_secret = os.getenv("CLIENT_SECRET")
-bearer_token = os.getenv("BEARER_TOKEN")
+import config
 
 b_analyzer_sentiment = create_analyzer(task="sentiment", lang="en")
 b_analyzer_emotion = create_analyzer(task="emotion", lang="en")
 b_analyzer_hate_speech = create_analyzer(task="hate_speech", lang="en")
 v_analyzer_sentiment = SentimentIntensityAnalyzer()
-client = tweepy.Client(bearer_token=bearer_token)
+
 
 TweetTokenizer()
 stop_words = set(stopwords.words('english'))
 nlp = spacy.load('en_core_web_sm')
-
-API_KEY = consumer_key
-API_SECRET_KEY = consumer_secret
-ACCESS_TOKEN = access_token
-ACCESS_TOKEN_SECRET = access_token_secret      
-        
-stream = tweepy.Stream(
-  API_KEY, API_SECRET_KEY,
-  ACCESS_TOKEN, ACCESS_TOKEN_SECRET
-)
 
 # TODO #10 must have better error detection and not fail on an exception
 class IDPrinter(tweepy.Stream):
@@ -184,18 +169,17 @@ class IDPrinter(tweepy.Stream):
                 crsr.commit()
                 #cnxn.close() # TODO #11 determine when connection to sql should be closed 
 
-
 printer = IDPrinter(
-  API_KEY, API_SECRET_KEY,
-  ACCESS_TOKEN, ACCESS_TOKEN_SECRET
+  config.consumer_key, config.consumer_secret,
+  config.access_token, config.access_token_secret
 )
 
 driver = '{ODBC Driver 17 for SQL Server}'
 server_name = 'twitpoli1984-sqlsrv'
 database_name = 'mosenatetweets-db'
 server = '{server_name}.database.windows.net,1433'.format(server_name=server_name)
-username = "joewils"
-password = "Pissyduck113!@"
+username = config.username
+password = config.password
 
 connection_string = textwrap.dedent('''
     Driver={driver};

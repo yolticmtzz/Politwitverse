@@ -5,12 +5,13 @@ from twit import * # functions used to streamline getting data out of tweet and 
 from twitnlp import * # functions used in tweet NLP (sentiment, emotion, hate, etc.)
 import time
 import os
+import config
 
-consumer_key = os.getenv("CONSUMER_KEY")
-consumer_secret = os.getenv("CONSUMER_SECRET")
-access_token = os.getenv("CLIENT_ID")
-access_token_secret = os.getenv("CLIENT_SECRET")
-bearer_token = os.getenv("BEARER_TOKEN")
+consumer_key = config.consumer_key
+consumer_secret = config.consumer_secret
+access_token = config.access_token
+access_token_secret = config.access_token_secret
+bearer_token = config.bearer_token
 
 def print_tweet_data():
     print(tweet_created_at)

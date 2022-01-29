@@ -11,12 +11,13 @@ from nltk.tokenize import TweetTokenizer
 import twit
 import spacy
 import os
+import config
 
-consumer_key = os.getenv("CONSUMER_KEY")
-consumer_secret = os.getenv("CONSUMER_SECRET")
-access_token = os.getenv("CLIENT_ID")
-access_token_secret = os.getenv("CLIENT_SECRET")
-bearer_token = os.getenv("BEARER_TOKEN")
+consumer_key = config.consumer_key
+consumer_secret = config.consumer_secret
+access_token = config.access_token
+access_token_secret = config.access_token_secret
+bearer_token = config.bearer_token
 
 b_analyzer_sentiment = create_analyzer(task="sentiment", lang="en")
 b_analyzer_emotion = create_analyzer(task="emotion", lang="en")

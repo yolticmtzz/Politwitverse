@@ -5,12 +5,9 @@ from twit import * # functions used to streamline getting data out of tweet and 
 from twitnlp import * # functions used in tweet NLP (sentiment, emotion, hate, etc.)
 import time
 import os
+import config
 
-consumer_key = os.getenv("CONSUMER_KEY")
-consumer_secret = os.getenv("CONSUMER_SECRET")
-access_token = os.getenv("CLIENT_ID")
-access_token_secret = os.getenv("CLIENT_SECRET")
-bearer_token = os.getenv("BEARER_TOKEN")
+bearer_token = config.bearer_token
 
 
 def print_tweet_data():
@@ -23,14 +20,14 @@ def print_tweet_data():
     print(tweet_mentions)
     print("---------------------------------------------------")
     return
-
+print(bearer_token)
 client = tweepy.Client(bearer_token=bearer_token)
 #client2 = tweepy.Client
 
 ###################################################################################################################################
 #queries
 # user_id = '4591016128'
-query = "mogov"
+query = "moleg"
 #query = "missouri schools"
 project_name = ""
 query_name = query
@@ -44,8 +41,8 @@ driver = '{ODBC Driver 17 for SQL Server}'
 server_name = 'twitpoli1984-sqlsrv'
 database_name = 'mosenatetweets-db'
 server = '{server_name}.database.windows.net,1433'.format(server_name=server_name)
-username = "joewils"
-password = "Pissyduck113!@"
+username = config.username
+password = config.password
 
 connection_string = textwrap.dedent('''
     Driver={driver};
@@ -103,9 +100,7 @@ while next_token is not None:
             #     tweet_referenced_text = None
                 
             # print(tweet_referenced_text)
-            tweet_referenced_text = None
-         
-                
+            tweet_referenced_text = None 
                 
             # populate tweet fields 
             tweet_lang = tweet.lang 
@@ -150,6 +145,8 @@ while next_token is not None:
                 (tweet_id)
             )
 
+            print_tweet_data()
+
             results = crsr.fetchall()
             row_count = crsr.rowcount
 
@@ -168,5 +165,4 @@ while next_token is not None:
         print('sleeping')
         time.sleep(1)
 
-cnxn.close() 
-    
+cnxn.close()
