@@ -10,12 +10,19 @@ from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
 import twit
 import spacy
+import os
+
+consumer_key = os.getenv("CONSUMER_KEY")
+consumer_secret = os.getenv("CONSUMER_SECRET")
+access_token = os.getenv("CLIENT_ID")
+access_token_secret = os.getenv("CLIENT_SECRET")
+bearer_token = os.getenv("BEARER_TOKEN")
 
 b_analyzer_sentiment = create_analyzer(task="sentiment", lang="en")
 b_analyzer_emotion = create_analyzer(task="emotion", lang="en")
 b_analyzer_hate = create_analyzer(task="hate_speech", lang="en")
 v_analyzer_sentiment = SentimentIntensityAnalyzer()
-client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAANh02yZK%2Bg2Ga9OaIGmo%2FdcBKwI4%3DoBVTm4dbV9EsX06kTvtAz5XjSCK222TAxusnGUposUxAGoEFqg')
+client = tweepy.Client(bearer_token=bearer_token)
 p.set_options(p.OPT.URL, p.OPT.MENTION, p.OPT.HASHTAG)
 TweetTokenizer()
 stop_words = set(stopwords.words('english'))

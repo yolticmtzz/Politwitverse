@@ -1,4 +1,3 @@
-import tweepy
 from pysentimiento import create_analyzer
 from nltk.tokenize import sent_tokenize
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
@@ -10,7 +9,6 @@ b_analyzer_sentiment = create_analyzer(task="sentiment", lang="en")
 b_analyzer_emotion = create_analyzer(task="emotion", lang="en")
 b_analyzer_hate = create_analyzer(task="hate_speech", lang="en")
 v_analyzer_sentiment = SentimentIntensityAnalyzer()
-client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAQ6Wu3fVaVsdg4PHyN7ktSku8u8g%3DMWmLEo5o3YPP0HsKRrX5S1UcKAnemvF2UVPG5Sp6S2qXRFNB9j')
 TweetTokenizer()
 stop_words = set(stopwords.words('english'))
 nlp = spacy.load('en_core_web_sm')
@@ -55,6 +53,3 @@ def tweet_hate_analyzer(text):
           h = "None"
      
      return (h)
-
-
-

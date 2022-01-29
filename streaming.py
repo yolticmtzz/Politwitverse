@@ -10,21 +10,28 @@ from nltk.tokenize import sent_tokenize
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from pysentimiento import create_analyzer
 import spacy
+import os
+
+consumer_key = os.getenv("CONSUMER_KEY")
+consumer_secret = os.getenv("CONSUMER_SECRET")
+access_token = os.getenv("CLIENT_ID")
+access_token_secret = os.getenv("CLIENT_SECRET")
+bearer_token = os.getenv("BEARER_TOKEN")
 
 b_analyzer_sentiment = create_analyzer(task="sentiment", lang="en")
 b_analyzer_emotion = create_analyzer(task="emotion", lang="en")
 b_analyzer_hate_speech = create_analyzer(task="hate_speech", lang="en")
 v_analyzer_sentiment = SentimentIntensityAnalyzer()
-client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAQ6Wu3fVaVsdg4PHyN7ktSku8u8g%3DMWmLEo5o3YPP0HsKRrX5S1UcKAnemvF2UVPG5Sp6S2qXRFNB9j')
+client = tweepy.Client(bearer_token=bearer_token)
 
 TweetTokenizer()
 stop_words = set(stopwords.words('english'))
 nlp = spacy.load('en_core_web_sm')
 
-API_KEY = "anvCaAUUuYqG3xLR7dNAzR0dr"
-API_SECRET_KEY = "ULtEkEdycJzC08cyebSg1ExdOVgCg5pUG0qtLPnLta24ClNDqr"
-ACCESS_TOKEN = "1469761271709028359-FrJt9sku3toFacDx1tdvmSPc273pKf"
-ACCESS_TOKEN_SECRET = "mlblwNEQ21A6IrmC4boX42Rctpq0WLNMfTsoOSmOwPrAa"      
+API_KEY = consumer_key
+API_SECRET_KEY = consumer_secret
+ACCESS_TOKEN = access_token
+ACCESS_TOKEN_SECRET = access_token_secret      
         
 stream = tweepy.Stream(
   API_KEY, API_SECRET_KEY,

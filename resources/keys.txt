@@ -1,26 +1,13 @@
 
-twitter api key consumer
-anvCaAUUuYqG3xLR7dNAzR0dr
+Consumer Key - OifgFLmQR76CfrvifGB4MCtrU
 
-twitter api secret consumer
-ULtEkEdycJzC08cyebSg1ExdOVgCg5pUG0qtLPnLta24ClNDqr
+Consumer Secret - 8B81SR1ZQF3IIdD24viHMowJqOBOPOALyylYqRKr6hmbDQTePz
 
-bearer token
-AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAQ6Wu3fVaVsdg4PHyN7ktSku8u8g%3DMWmLEo5o3YPP0HsKRrX5S1UcKAnemvF2UVPG5Sp6S2qXRFNB9j
+Bearer Token - AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAA6L7Pk7nWV0i7G%2FS7W2pIdnEOEUc%3DqicKzjYrHwqHHHsT35CHcY0wvTCWuNkPyOZ3PEQy8iacruf9a9
 
-access token
-1469761271709028359-FrJt9sku3toFacDx1tdvmSPc273pKf
+Client ID - 8B81SR1ZQF3IIdD24viHMowJqOBOPOALyylYqRKr6hmbDQTePz
 
-access token secret
-mlblwNEQ21A6IrmC4boX42Rctpq0WLNMfTsoOSmOwPrAa
-
-oath2 client secret u-kbhI568QREAMDAdXezv9Ay7kgiUE8io0n1suu1UF0EXk-eqc
-
-client = tweepy.Client(bearer_token='AAAAAAAAAAAAAAAAAAAAAGPIWwEAAAAAKAMZyNc9%2FF0wV%2Bzp9y2jcPwYG9U%3Dvvv4YqNOg5ZBuzznjuIwttR5UL6ESPN96ceQQaEeJ1Kng0PeDQ', 
-                       consumer_key='anvCaAUUuYqG3xLR7dNAzR0dr', 
-                       consumer_secret='ULtEkEdycJzC08cyebSg1ExdOVgCg5pUG0qtLPnLta24ClNDqr', 
-                       access_token='1469761271709028359-FrJt9sku3toFacDx1tdvmSPc273pKf', 
-                       access_token_secret='mlblwNEQ21A6IrmC4boX42Rctpq0WLNMfTsoOSmOwPrAa')
+Client Secret - tsXmwZP2Jh3cihR6uCXp-6KfYbRR8p8wZN-LOUQj4gNwxGgBI9
 
 newsapi key = f06dafe0f81643f3958d127eeba925ac
 
