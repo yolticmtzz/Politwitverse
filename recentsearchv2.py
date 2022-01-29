@@ -29,9 +29,8 @@ client = tweepy.Client(bearer_token=bearer_token)
 # user_id = '4591016128'
 query = "moleg"
 #query = "missouri schools"
-project_name = ""
-query_name = query
-project_type = "batchtoken" # can be batch, stream, batchtoken, batchpaginator
+jobname = ""
+jobtype = "batchtoken" # can be batch, stream, batchtoken, batchpaginator
 
 ###################################################################################################################################
 
@@ -73,7 +72,7 @@ while next_token is not None:
             #ent_dict = tweet.entities
             if users[tweet.author_id]:  # many users are included in payload (mentions, etc) this just makes tweet user and user in users be equal
                 user = users[tweet.author_id]
-            tweet_liked_text = tweet.text
+            tweet_text = tweet.text
             tweet_created_at = tweet.created_at
             tweet_id = tweet.id
             tweet_clean_text = clean_tweets(tweet.text)
@@ -152,9 +151,9 @@ while next_token is not None:
 
             if row_count == 0: # tweet_id (primary key) does not already exit
                 count = crsr.execute("""
-                INSERT INTO NICKYSLIKES (tweet_liked_text, tweet_created_at, tweet_id, tweet_clean_text, tweet_retweet_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_lang, tweet_reply_settings, tweet_source, tweet_conversation_id, tweet_author_id, tweet_in_response_to_user_id,tweet_user_id, tweet_username, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_sentiment_label, tweet_emotion_label, tweet_hate_label, tweet_mentions, tweet_hashtags, tweet_annotations, tweet_urls, tweet_entities, tweet_domains, tweet_user_name, tweet_referenced_text, tweet_user_count)
-                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                tweet_liked_text, tweet_created_at, tweet_id, tweet_clean_text, tweet_retweet_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_lang, tweet_reply_settings, tweet_source, tweet_conversation_id, tweet_author_id, tweet_in_response_to_user_id,tweet_user_id, tweet_username, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_sentiment_label, tweet_emotion_label, tweet_hate_label,tweet_mentions, tweet_hashtags, tweet_annotations, tweet_urls,tweet_entities, tweet_domains, tweet_user_name, tweet_referenced_text, tweet_user_count).rowcount 
+                INSERT INTO NICKYSLIKES (tweet_text, tweet_created_at, tweet_id, tweet_clean_text, tweet_retweet_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_lang, tweet_reply_settings, tweet_source, tweet_conversation_id, tweet_author_id, tweet_in_response_to_user_id,tweet_user_id, tweet_username, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_sentiment_label, tweet_emotion_label, tweet_hate_label, tweet_mentions, tweet_hashtags, tweet_annotations, tweet_urls, tweet_entities, tweet_domains, tweet_user_name, tweet_referenced_text, tweet_user_count, jobname, jobtype, query)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                tweet_text, tweet_created_at, tweet_id, tweet_clean_text, tweet_retweet_count, tweet_like_count, tweet_quote_count, tweet_reply_count, tweet_reference_type, tweet_reference_id, tweet_lang, tweet_reply_settings, tweet_source, tweet_conversation_id, tweet_author_id, tweet_in_response_to_user_id,tweet_user_id, tweet_username, tweet_user_description, tweet_user_location, tweet_user_created_at, tweet_user_pinned_tweet, tweet_user_profile_url, tweet_user_verified, tweet_user_listed_count, tweet_user_following_count, tweet_user_followers_count, tweet_sentiment_label, tweet_emotion_label, tweet_hate_label,tweet_mentions, tweet_hashtags, tweet_annotations, tweet_urls,tweet_entities, tweet_domains, tweet_user_name, tweet_referenced_text, tweet_user_count, jobname, jobtype, query).rowcount 
             
             crsr.commit()
         
