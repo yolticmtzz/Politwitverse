@@ -135,7 +135,7 @@ while next_token is not None:
             tweet_user_followers_count = user.public_metrics['followers_count']
             tweet_user_count = user.public_metrics['tweet_count']
             
-            tweet_sentiment_label, tweet_score_probability = tweet_sentiment_analyzer(tweet_liked_text)
+            tweet_sentiment_label, tweet_score_probability = tweet_sentiment_analyzer(tweet_text)
             tweet_emotion_label = tweet_emotion_analyzer(tweet_clean_text)
             tweet_hate_label = tweet_hate_analyzer(tweet_clean_text) 
 
