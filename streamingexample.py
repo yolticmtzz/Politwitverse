@@ -1,9 +1,47 @@
 import tweepy
 import os
 import config
-from twitclass import Hydrator
 
 
+class tweetEntity:
+    
+    def __init__(self, entity):
+        pass  
+        
+    def hydrate(tweet_entities):
+
+          if 'mentions' in ent_dict:
+                  t_mentions = ent_dict.get('mentions')
+                  tweet_mentions = mention_hydrate(t_mentions) #
+                  tweet_mentions = makeitastring(tweet_mentions)
+                          
+          else:
+                  tweet_mentions = empty        
+                      
+          if 'hashtags' in ent_dict is not None: #is not None needed????
+                  t_hashtags = ent_dict.get('hashtags')  
+                  tweet_hashtags = hashtag_hydrate(t_hashtags) #
+                  tweet_hashtags = makeitastring(tweet_hashtags)
+                      
+          else:
+                  tweet_hashtags = empty
+
+          if 'annotations' in ent_dict:
+                  t_annotations = ent_dict.get('annotations')   
+                  tweet_annotations = annotations_hydrate(t_annotations) #
+                  tweet_annotations = makeitastring(tweet_annotations)
+
+          else:
+                  tweet_annotations = empty
+
+          if 'urls' in ent_dict:
+                  t_urls = ent_dict.get('urls')
+                  tweet_urls = url_hydrate(t_urls) #
+                  tweet_urls = makeitastring(tweet_urls)
+          else:
+                  tweet_urls = empty
+                 
+          return tweet_mentions, tweet_hashtags, tweet_annotations, tweet_urls  
 
    
 # Driver Code
