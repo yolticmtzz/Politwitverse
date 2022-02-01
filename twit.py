@@ -13,7 +13,8 @@ def mention_hydrate(entity_list):
         x = x + 1   
     return container
 
-def hashtag_hydrate(entity_list):  
+def hashtag_hydrate(entity_list):
+
     x = 0 #list index
     i = 1 #list length
     container = []
@@ -55,6 +56,7 @@ def annotations_hydrate(entity_list):
     return container
     
 def remove_whitespace(text):
+
     return  " ".join(text.split())
 
 def clean_tweets(tweet_text):
