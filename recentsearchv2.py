@@ -23,9 +23,9 @@ client = tweepy.Client(bearer_token=bearer_token)
 ###################################################################################################################################
 # queries
 # user_id = '4591016128'
-query = "biden lang:en"
+query = "moleg"
 # query = "missouri schools"
-jobname = "bidentest"
+jobname = "moleg"
 jobtype = "batchtoken"  # can be batch, stream, batchtoken, batchpaginator
 
 ###################################################################################################################################
