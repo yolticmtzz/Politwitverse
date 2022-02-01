@@ -23,8 +23,12 @@ clist = []
 
 # Optional params: start_time,end_time,since_id,until_id,max_results,next_token,
 # expansions,tweet.fields,media.fields,poll.fields,place.fields,user.fields
-params = {'query': 'conversation_id:1487526628674748420', 'tweet.fields': 'author_id,context_annotations',
-          'user.fields': 'name,location,description,created_at', 'expansions': 'author_id'}
+params = {
+    "query": "conversation_id:1487526628674748420",
+    "tweet.fields": "author_id,context_annotations",
+    "user.fields": "name,location,description,created_at",
+    "expansions": "author_id",
+}
 
 
 def bearer_oauth(r):
@@ -37,6 +41,5 @@ def bearer_oauth(r):
     return r
 
 
-response = requests.request(
-    "GET", search_url, auth=bearer_oauth, params=params)
+response = requests.request("GET", search_url, auth=bearer_oauth, params=params)
 print(response.status_code)
