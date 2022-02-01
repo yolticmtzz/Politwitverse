@@ -234,8 +234,8 @@ driver = '{ODBC Driver 17 for SQL Server}'
 server_name = 'twitpoli1984-sqlsrv'
 database_name = 'mosenatetweets-db'
 server = '{server_name}.database.windows.net,1433'.format(server_name=server_name)
-username = "joewils"
-password = "Pissyduck113!@"
+username = "****"
+password = "***********!@"
 
 connection_string = textwrap.dedent('''
     Driver={driver};
